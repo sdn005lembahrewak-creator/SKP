@@ -22,7 +22,7 @@ button.g{background:#e2e8f0;color:var(--t)}button.r{background:#c0392b}button.s{
 .bx{display:flex;align-items:center;gap:8px;margin:5px 0}.bx i{display:block;height:14px;background:var(--p);border-radius:4px}.bx em{min-width:130px;font-style:normal;font-size:12px}
 #ld{position:fixed;inset:0;background:#fff8;display:none;align-items:center;justify-content:center;z-index:9}#ld div{background:var(--p);color:#fff;padding:12px 20px;border-radius:8px}
 #toast{position:fixed;right:14px;bottom:14px;padding:12px 16px;border-radius:8px;color:#fff;display:none;z-index:10}
-.badge{padding:2px 8px;border-radius:10px;font-size:12px;color:#fff;background:#16a34a}.badge.x{background:#d97706}
+.fl{display:inline-block;padding:6px 10px;border-radius:8px;background:#e2e8f0;cursor:pointer;margin:2px;font-size:12px}.badge{padding:2px 8px;border-radius:10px;font-size:12px;color:#fff;background:#16a34a}.badge.x{background:#d97706}
 #kop{text-align:center;margin-bottom:10px}
 @media(max-width:800px){#side{transform:translateX(-100%)}#side.open{transform:none}#top,#main{margin-left:0}#menu{display:block}}
 @media print{#side,#top,.np{display:none!important}#main{margin:0;padding:0}.card{border:0}table{min-width:0;font-size:11px}}
@@ -33,7 +33,7 @@ button.g{background:#e2e8f0;color:var(--t)}button.r{background:#c0392b}button.s{
 <div id="main"></div><div id="ld"><div>Memuat…</div></div><div id="toast"></div>
 <script>
 // ================= KONFIGURASI =================
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxifvstWVaNKQ2exMrocDZNQAp0WuLhJdpozLre0ppJaGPcbGDnDDJm7OkSSlJp5pc/exec";
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxa9hCBQowJ91n3q-xjBHXhJBSMYWSzIsXLhLdvwtWfSmB4FFOs4MjwkqxmKFm4pQru/exec";
 // ===============================================
 const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const SAT=['kegiatan','dokumen','data','berkas','laporan','kali','lainnya'];
@@ -76,14 +76,17 @@ function fInput(){const e=edit||{Tanggal:new Date().toISOString().slice(0,10),Sa
   <div class="row"><div><label>Volume</label><input type="number" min="0" id="f_v" value="${e.Volume}"></div>
   <div><label>Satuan</label><select id="f_s">${SAT.map(x=>`<option ${x===e.Satuan?'selected':''}>${x}</option>`).join('')}</select></div>
   <div><label>Bukti dukung</label><select id="f_b"><option ${e.Status_Bukti==='Ada'?'selected':''}>Ada</option><option ${e.Status_Bukti!=='Ada'?'selected':''}>Belum Ada</option></select></div></div>
-  <label>Link bukti (Google Drive)</label><input id="f_l" value="${esc(e.Link_Bukti||'')}" placeholder="https://drive.google.com/…">
+  <div class="row"><div><label>📷 Foto bukti (dari galeri/kamera/laptop)</label><input type="file" id="f_foto" accept="image/*" multiple></div><div><label>📄 Dokumen bukti (PDF/Word/Excel dll)</label><input type="file" id="f_dok" multiple></div></div><small>File otomatis masuk Drive: SKP tahun / bulan / tanggal / Foto atau Dokumen.</small>
   <label>Keterangan (opsional)</label><input id="f_ket" value="${esc(e.Keterangan||'')}">
   <div class="bar"><button onclick="saveSKP()">SIMPAN</button><button class="g" onclick="edit=null;fInput()">RESET</button></div></div>`;
   kgOpt(e.Kegiatan)}
 function kgOpt(sel){const r=$('f_r').value;$('f_k').innerHTML='<option value="">-- pilih kegiatan --</option>'+S.keg.filter(k=>k.ID_RHK===r&&k.Status!=='Nonaktif').map(k=>`<option ${k.Nama_Kegiatan===sel?'selected':''}>${esc(k.Nama_Kegiatan)}</option>`).join('')}
 function tpl(){const k=S.keg.find(x=>x.Nama_Kegiatan===$('f_k').value&&x.ID_RHK===$('f_r').value);if(k){$('f_u').value=k.Uraian_Template;$('f_o').value=k.Output_Template}}
-async function saveSKP(){const d={ID:edit?edit.ID:'',Tanggal:$('f_t').value,ID_RHK:$('f_r').value,Kegiatan:$('f_k').value,Uraian:$('f_u').value,Output:$('f_o').value,Volume:$('f_v').value,Satuan:$('f_s').value,Keterangan:$('f_ket').value,Status_Bukti:$('f_b').value,Link_Bukti:$('f_l').value};
-  try{await api(edit?'updateSKP':'saveSKP',d);toast('Tersimpan');edit=null;await load();go('input')}catch(e){toast(e.message,false)}}
+async function saveSKP(){const fl=[...$('f_foto').files,...$('f_dok').files];
+  const d={ID:edit?edit.ID:'',Tanggal:$('f_t').value,ID_RHK:$('f_r').value,Kegiatan:$('f_k').value,Uraian:$('f_u').value,Output:$('f_o').value,Volume:$('f_v').value,Satuan:$('f_s').value,Keterangan:$('f_ket').value,Status_Bukti:fl.length?'Ada':$('f_b').value,Link_Bukti:edit?edit.Link_Bukti:''};
+  try{const rec=await api(edit?'updateSKP':'saveSKP',d);toast('Tersimpan');
+    if(fl.length){const n=await uploadFiles(rec,fl);toast(n+' file bukti terunggah ke Drive')}
+    edit=null;await load();go('input')}catch(e){toast(e.message,false)}}
 
 // ---------- Data SKP ----------
 function filt(){const q=Q.q.toLowerCase();return S.skp.filter(r=>(!q||Object.values(r).join(' ').toLowerCase().includes(q))&&(!Q.tgl||r.Tanggal===Q.tgl)&&(!Q.bln||r.Bulan===Q.bln)&&(!Q.rhk||r.ID_RHK===Q.rhk)&&(!Q.keg||r.Kegiatan===Q.keg)).sort((a,b)=>a.Tanggal<b.Tanggal?1:-1)}
@@ -100,10 +103,15 @@ function doEdit(id){edit=S.skp.find(r=>r.ID===id);go('input')}
 async function doDel(id){if(!confirm('Hapus data ini? Tindakan tidak bisa dibatalkan.'))return;try{await api('deleteSKP',{ID:id});toast('Dihapus');await load()}catch(e){toast(e.message,false)}}
 function gsearch(){Q={q:$('gq').value,tgl:'',bln:'',rhk:'',keg:''};pg=1;go('data')}
 
-// ---------- Bukti dukung (upload ke Drive) ----------
-function fBukti(){$('main').innerHTML=`<div class="card"><h2>Bukti Dukung</h2><div class="tw"><table><tr><th>Tanggal</th><th>Kegiatan</th><th>Uraian</th><th>Status</th><th>File</th><th>Upload</th></tr>${[...S.skp].sort((a,b)=>a.Tanggal<b.Tanggal?1:-1).slice(0,100).map(r=>{const f=S.bukti.filter(b=>b.ID_SKP===r.ID).pop();return `<tr><td>${r.Tanggal}</td><td>${esc(r.Kegiatan)}</td><td>${esc(r.Uraian).slice(0,80)}</td><td>${bdg(r)}</td><td>${f?esc(f.Nama_File):'-'}</td><td><input type="file" onchange="up('${r.ID}',this)"></td></tr>`}).join('')}</table></div><small>Menampilkan 100 data terbaru. Maks ±7 MB per file.</small></div>`}
-function up(id,el){const f=el.files[0];if(!f)return;if(f.size>7e6)return toast('File terlalu besar',false);const r=S.skp.find(x=>x.ID===id),fr=new FileReader();
-  fr.onload=async()=>{try{await api('uploadEvidence',{ID_SKP:id,Tanggal:r.Tanggal,Kegiatan:r.Kegiatan,name:f.name,mime:f.type,base64:fr.result.split(',')[1]});toast('Terunggah ke Drive');await load();go('bukti')}catch(e){toast(e.message,false)}};fr.readAsDataURL(f)}
+// ---------- Bukti dukung (ambil dari perangkat → simpan ke Drive) ----------
+const rawRead=f=>new Promise((ok,no)=>{if(f.size>7e6)return no(new Error(f.name+' lebih dari 7 MB'));const r=new FileReader();r.onload=()=>ok({name:f.name,mime:f.type,base64:r.result.split(',')[1]});r.onerror=()=>no(new Error('Gagal membaca '+f.name));r.readAsDataURL(f)});
+// Foto diperkecil otomatis (maks 1600px, JPEG) agar ringan & lolos batas ukuran
+const readFile=f=>f.type.startsWith('image/')?new Promise(ok=>{const im=new Image(),u=URL.createObjectURL(f);
+  im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok({name:f.name.replace(/\.\w+$/,'')+'.jpg',mime:'image/jpeg',base64:c.toDataURL('image/jpeg',.8).split(',')[1]})};
+  im.onerror=()=>rawRead(f).then(ok,e=>{toast(e.message,false);ok(null)});im.src=u}):rawRead(f);
+async function uploadFiles(rec,files){let n=0;for(const f of files){try{const x=await readFile(f);if(!x)continue;await api('uploadEvidence',{ID_SKP:rec.ID,Tanggal:rec.Tanggal,Kegiatan:rec.Kegiatan,...x});n++}catch(e){toast(e.message,false)}}return n}
+async function upRow(id,el){const files=[...el.files];if(!files.length)return;const n=await uploadFiles(S.skp.find(x=>x.ID===id),files);if(n)toast(n+' file terunggah ke Drive');await load();go('bukti')}
+function fBukti(){$('main').innerHTML=`<div class="card"><h2>Bukti Dukung</h2><div class="tw"><table><tr><th>Tanggal</th><th>Kegiatan</th><th>Status</th><th>File di Drive</th><th>Tambah bukti</th></tr>${[...S.skp].sort((a,b)=>a.Tanggal<b.Tanggal?1:-1).slice(0,100).map(r=>`<tr><td>${r.Tanggal}</td><td>${esc(r.Kegiatan)}<br><small>${esc(r.Uraian).slice(0,70)}</small></td><td>${bdg(r)}</td><td>${S.bukti.filter(b=>b.ID_SKP===r.ID).map(b=>`<div><a href="${esc(b.Link_File)}" target="_blank">${b.Jenis_Bukti==='Foto'?'📷':'📄'} ${esc(b.Nama_File)}</a></div>`).join('')||'-'}</td><td><label class="fl">📷 Foto<input type="file" accept="image/*" multiple hidden onchange="upRow('${r.ID}',this)"></label><label class="fl">📄 Dokumen<input type="file" multiple hidden onchange="upRow('${r.ID}',this)"></label></td></tr>`).join('')}</table></div><small>100 data terbaru. Foto diperkecil otomatis; dokumen maks ±7 MB per file.</small></div>`}
 
 // ---------- Rekap & Laporan ----------
 const pick=()=>`<div class="bar np"><div><label>Tahun</label><input type="number" id="ry" value="${rk.y}" style="width:100px"></div><div><label>Bulan</label><select id="rb">${BLN.map(b=>`<option ${b===rk.b?'selected':''}>${b}</option>`).join('')}</select></div><button onclick="rk={y:$('ry').value,b:$('rb').value};go(page)">Tampilkan</button></div>`;
