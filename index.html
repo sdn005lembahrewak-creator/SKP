@@ -1,198 +1,133 @@
 <!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Rekap Bukti Dukung SKP</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SKP Harian – Sistem Administrasi Kinerja</title>
 <style>
-:root{--bg:#eef2f4;--card:#fff;--ink:#16252d;--mut:#5d6f78;--line:#d3dde2;--pri:#0f5c6e;--pri2:#0b4553;--ok:#1d7a4d;--bad:#b3261e;--hl:#e3f1f4}
-@media(prefers-color-scheme:dark){:root{--bg:#0f1a1f;--card:#17262d;--ink:#e6eef1;--mut:#97aab3;--line:#2a3d46;--pri:#4fb3c8;--pri2:#7cc9da;--hl:#1b3640;--ok:#5cc08f;--bad:#f2837c}}
-*{box-sizing:border-box}
-body{margin:0;font-family:'Public Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
-header{background:var(--pri);color:#fff;padding:18px 20px}
-@media(prefers-color-scheme:dark){header{background:#12333d}}
-.wrap{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
-h1{font-size:1.25rem;margin:0;font-weight:700}
-header small{opacity:.85}
-main{max-width:1100px;margin:0 auto;padding:18px 16px 60px;display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
-@media(min-width:900px){main{grid-template-columns:420px minmax(0,1fr);align-items:start}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px}
-h2{font-size:1rem;margin:0 0 12px}
-label{display:block;font-size:.82rem;font-weight:600;margin:10px 0 4px}
-input,textarea,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);font:inherit}
-textarea{min-height:70px;resize:vertical}
-input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--pri);outline-offset:1px}
-.row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-button{font:inherit;font-weight:600;border:0;border-radius:6px;padding:9px 14px;cursor:pointer;background:var(--pri);color:#fff}
-@media(prefers-color-scheme:dark){button{color:#0b1b21}}
-button:hover{background:var(--pri2)}
-button.ghost{background:transparent;color:var(--pri);border:1px solid var(--line)}
-button.ghost:hover{background:var(--hl)}
-button.del{color:var(--bad)}
-button:disabled{opacity:.55;cursor:wait}
-.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:12px}
-.bar input[type=month]{width:auto}
-.acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-.item{border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:10px}
-.item h3{margin:0 0 2px;font-size:.98rem}
-.item .meta{color:var(--mut);font-size:.82rem;margin-bottom:6px}
-.item dl{margin:0;display:grid;grid-template-columns:130px 1fr;gap:3px 10px;font-size:.88rem}
-.item dt{color:var(--mut)}.item dd{margin:0;white-space:pre-wrap;word-break:break-word}
-.item a{color:var(--pri)}
-.item .acts{margin-top:10px}.item button{padding:5px 10px;font-size:.82rem}
-.empty{color:var(--mut);text-align:center;padding:28px 10px}
-.stat{font-size:.88rem;color:var(--mut)}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;display:none;max-width:90vw;z-index:9}
-dialog{border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);max-width:480px;width:92%}
-dialog::backdrop{background:rgba(0,0,0,.45)}
-.hint{font-size:.78rem;color:var(--mut);margin-top:4px}
-</style>
-</head>
-<body>
-<header><div class="wrap">
-  <div><h1>Rekap Bukti Dukung SKP</h1><small>Catat kegiatan harian, simpan otomatis ke Google Sheets dan Google Docs</small></div>
-  <button class="ghost" id="btnSet" style="color:#fff;border-color:rgba(255,255,255,.5)">Pengaturan</button>
-</div></header>
-
-<main>
-<section class="card">
-  <h2 id="formTitle">Tambah kegiatan</h2>
-  <form id="f" autocomplete="off">
-    <input type="hidden" id="id">
-    <label for="uraianPekerjaan">Uraian pekerjaan (rencana hasil kerja SKP)</label>
-    <textarea id="uraianPekerjaan" required></textarea>
-    <div class="row">
-      <div><label for="tanggal">Tanggal</label><input type="date" id="tanggal" required></div>
-      <div><label for="jamMulai">Mulai</label><input type="time" id="jamMulai" required></div>
-      <div><label for="jamSelesai">Selesai</label><input type="time" id="jamSelesai" required></div>
-    </div>
-    <label for="tempat">Tempat pelaksanaan</label><input id="tempat" required>
-    <label for="pemangku">Pemangku kepentingan</label><input id="pemangku" required>
-    <label for="kegiatan">Kegiatan</label><input id="kegiatan" required>
-    <label for="uraian">Uraian kegiatan</label><textarea id="uraian" required></textarea>
-    <label for="hasil">Hasil yang didapat</label><textarea id="hasil" required></textarea>
-    <label for="bukti">Bukti dukung (tautan atau keterangan)</label><textarea id="bukti" style="min-height:50px"></textarea>
-    <label for="files">Unggah file bukti (opsional, tersimpan ke Drive)</label>
-    <input type="file" id="files" multiple>
-    <div class="hint">Gunakan file kecil (maks. sekitar 5 MB per file).</div>
-    <div class="acts">
-      <button type="submit" id="btnSave">Simpan kegiatan</button>
-      <button type="button" class="ghost" id="btnReset">Kosongkan form</button>
-    </div>
-  </form>
-</section>
-
-<section class="card">
-  <div class="bar">
-    <div><label for="bulan" style="margin:0 0 4px">Bulan rekap</label><input type="month" id="bulan"></div>
-    <button id="btnDoc">Buat dokumen bulan ini</button>
-  </div>
-  <div class="stat" id="stat"></div>
-  <div id="list" style="margin-top:12px"></div>
-</section>
-</main>
-
-<dialog id="dlg">
-  <form method="dialog" id="fs">
-    <h2>Pengaturan</h2>
-    <label for="url">URL Web App Google Apps Script</label>
-    <input id="url" placeholder="https://script.google.com/macros/s/.../exec">
-    <label for="nama">Nama (untuk kop dokumen)</label><input id="nama">
-    <label for="nip">NIP</label><input id="nip">
-    <div class="hint">Tersimpan di browser ini saja. Untuk mengisi permanen, ubah nilai DEFAULT_URL di file ini.</div>
-    <div class="acts"><button value="ok" id="sv">Simpan</button><button value="cancel" class="ghost">Tutup</button></div>
-  </form>
-</dialog>
-<div id="toast" role="status"></div>
-
+:root{--p:#1e5aa8;--bg:#f3f6fb;--c:#fff;--t:#1f2937;--m:#6b7280;--b:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial,sans-serif;background:var(--bg);color:var(--t);font-size:14px}
+#side{position:fixed;left:0;top:0;bottom:0;width:210px;background:#13294b;color:#fff;padding:14px 8px;overflow:auto;transition:.2s;z-index:5}
+#side h1{font-size:15px;margin:4px 8px 14px}#side a{display:block;padding:10px 12px;border-radius:8px;color:#cbd5e1;cursor:pointer;margin-bottom:2px}
+#side a.on,#side a:hover{background:var(--p);color:#fff}
+#top{margin-left:210px;background:var(--c);padding:10px 16px;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--b);position:sticky;top:0;z-index:4}
+#top input{flex:1;max-width:420px}#menu{display:none}
+#main{margin-left:210px;padding:16px}
+.card{background:var(--c);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat b{display:block;font-size:26px;color:var(--p)}.stat span{color:var(--m)}
+label{display:block;font-weight:600;margin:10px 0 4px}input,select,textarea,button{font:inherit}
+input,select,textarea{width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:8px;background:#fff}
+button{padding:9px 14px;border:0;border-radius:8px;background:var(--p);color:#fff;cursor:pointer}
+button.g{background:#e2e8f0;color:var(--t)}button.r{background:#c0392b}button.s{padding:4px 8px;font-size:12px}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin:10px 0}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:640px}th,td{border:1px solid var(--b);padding:7px;text-align:left;vertical-align:top}th{background:#eef2f8}
+.bx{display:flex;align-items:center;gap:8px;margin:5px 0}.bx i{display:block;height:14px;background:var(--p);border-radius:4px}.bx em{min-width:130px;font-style:normal;font-size:12px}
+#ld{position:fixed;inset:0;background:#fff8;display:none;align-items:center;justify-content:center;z-index:9}#ld div{background:var(--p);color:#fff;padding:12px 20px;border-radius:8px}
+#toast{position:fixed;right:14px;bottom:14px;padding:12px 16px;border-radius:8px;color:#fff;display:none;z-index:10}
+.badge{padding:2px 8px;border-radius:10px;font-size:12px;color:#fff;background:#16a34a}.badge.x{background:#d97706}
+#kop{text-align:center;margin-bottom:10px}
+@media(max-width:800px){#side{transform:translateX(-100%)}#side.open{transform:none}#top,#main{margin-left:0}#menu{display:block}}
+@media print{#side,#top,.np{display:none!important}#main{margin:0;padding:0}.card{border:0}table{min-width:0;font-size:11px}}
+</style></head><body>
+<!-- ===== KONFIGURASI: GANTI URL DI BAWAH INI DENGAN URL WEB APP APPS SCRIPT ANDA ===== -->
+<div id="side"><h1>SKP HARIAN</h1><div id="nav"></div></div>
+<div id="top"><button id="menu" class="g" onclick="side.classList.toggle('open')">☰</button><input id="gq" placeholder="Cari global (mis. Dapodik)…" onkeydown="if(event.key==='Enter')gsearch()"><button onclick="gsearch()">Cari</button></div>
+<div id="main"></div><div id="ld"><div>Memuat…</div></div><div id="toast"></div>
 <script>
-const DEFAULT_URL = ''; // tempel URL Web App di sini bila ingin permanen
-const $ = id => document.getElementById(id);
-const BLN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-const FIELDS = ['id','tanggal','jamMulai','jamSelesai','tempat','uraianPekerjaan','pemangku','kegiatan','uraian','hasil','bukti'];
-let data = [];
-const cfg = k => { try { return localStorage.getItem(k) || '' } catch (e) { return '' } };
-const setCfg = (k, v) => { try { localStorage.setItem(k, v) } catch (e) {} };
-const apiUrl = () => cfg('url') || DEFAULT_URL;
-
-function toast(m, ms = 3000) { const t = $('toast'); t.textContent = m; t.style.display = 'block'; clearTimeout(t._t); t._t = setTimeout(() => t.style.display = 'none', ms); }
-function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
-function linkify(s) { return esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>'); }
-function tgl(s) { const [y, m, d] = s.split('-'); return `${+d} ${BLN[+m - 1]} ${y}`; }
-
-async function call(body) {
-  if (!apiUrl()) { $('dlg').showModal(); throw new Error('Isi URL Web App di Pengaturan dulu.'); }
-  const r = await fetch(apiUrl(), { method: 'POST', body: JSON.stringify(body) }); // text/plain: tanpa preflight CORS
-  const j = await r.json(); if (!j.ok) throw new Error(j.error || 'Terjadi kesalahan'); return j;
+// ================= KONFIGURASI =================
+const GAS_WEB_APP_URL = "ISI_URL_WEB_APP_GOOGLE_APPS_SCRIPT";
+// ===============================================
+const BLN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const SAT=['kegiatan','dokumen','data','berkas','laporan','kali','lainnya'];
+const PAGES=[['dash','Dashboard'],['input','Input SKP'],['data','Data SKP'],['bukti','Bukti Dukung'],['rekap','Rekap'],['lap','Laporan'],['master','Master RHK/Kegiatan'],['set','Pengaturan']];
+let S={settings:{},rhk:[],keg:[],skp:[],bukti:[]},page='dash',pg=1,Q={q:'',tgl:'',bln:'',rhk:'',keg:''},edit=null,rk={y:new Date().getFullYear(),b:BLN[new Date().getMonth()]};
+const $=id=>document.getElementById(id), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const token=()=>localStorage.getItem('skp_token')||'';
+function toast(m,ok=true){const t=$('toast');t.textContent=m;t.style.background=ok?'#16a34a':'#c0392b';t.style.display='block';setTimeout(()=>t.style.display='none',3500)}
+// POST text/plain = "simple request" → tanpa preflight CORS di Apps Script
+async function api(action,data){
+  if(GAS_WEB_APP_URL.startsWith('ISI_'))throw new Error('GAS_WEB_APP_URL belum diisi di Index.html');
+  $('ld').style.display='flex';
+  try{const r=await fetch(GAS_WEB_APP_URL,{method:'POST',body:JSON.stringify({action,data,token:token()})});
+    const j=await r.json();if(!j.ok)throw new Error(j.error);return j.data}
+  finally{$('ld').style.display='none'}
 }
-async function load() {
-  if (!apiUrl()) { $('list').innerHTML = '<div class="empty">Buka Pengaturan, lalu tempel URL Web App Anda.</div>'; return; }
-  $('list').innerHTML = '<div class="empty">Memuat data…</div>';
-  try {
-    const r = await fetch(apiUrl() + '?bulan=' + $('bulan').value); const j = await r.json();
-    if (!j.ok) throw new Error(j.error); data = j.data; render();
-  } catch (e) { $('list').innerHTML = '<div class="empty">Gagal memuat: ' + esc(e.message) + '</div>'; }
-}
-function render() {
-  const [y, m] = $('bulan').value.split('-');
-  $('stat').textContent = `${BLN[m - 1]} ${y}: ${data.length} kegiatan, ${new Set(data.map(d => d.tanggal)).size} hari terisi`;
-  if (!data.length) { $('list').innerHTML = '<div class="empty">Belum ada kegiatan di bulan ini. Isi form di samping untuk menambah.</div>'; return; }
-  $('list').innerHTML = data.map(d => `<article class="item">
-    <h3>${esc(d.kegiatan)}</h3>
-    <div class="meta">${tgl(d.tanggal)}, ${d.jamMulai} - ${d.jamSelesai} WIB</div>
-    <dl><dt>Uraian pekerjaan</dt><dd>${esc(d.uraianPekerjaan)}</dd>
-    <dt>Tempat</dt><dd>${esc(d.tempat)}</dd>
-    <dt>Pemangku kepentingan</dt><dd>${esc(d.pemangku)}</dd>
-    <dt>Uraian kegiatan</dt><dd>${esc(d.uraian)}</dd>
-    <dt>Hasil</dt><dd>${esc(d.hasil)}</dd>
-    <dt>Bukti dukung</dt><dd>${linkify(d.bukti) || '-'}</dd></dl>
-    <div class="acts"><button class="ghost" data-e="${d.id}">Ubah</button><button class="ghost del" data-d="${d.id}">Hapus</button></div>
-  </article>`).join('');
-}
-function resetForm() {
-  $('f').reset(); $('id').value = ''; $('formTitle').textContent = 'Tambah kegiatan';
-  const b = $('bulan').value; if (b && !$('tanggal').value) $('tanggal').value = (b === new Date().toISOString().slice(0, 7)) ? new Date().toISOString().slice(0, 10) : b + '-01';
-}
-const readFile = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res({ name: f.name, mime: f.type || 'application/octet-stream', data: r.result.split(',')[1] }); r.onerror = rej; r.readAsDataURL(f); });
+async function load(){try{S=await api('getAll');}catch(e){toast(e.message,false)}go(page)}
+function go(p){page=p;side.classList.remove('open');
+  $('nav').innerHTML=PAGES.map(x=>`<a class="${x[0]===p?'on':''}" onclick="go('${x[0]}')">${x[1]}</a>`).join('');
+  ({dash,input:fInput,data:fData,bukti:fBukti,rekap:fRekap,lap:fLap,master:fMaster,set:fSet})[p]()}
+const rhkOpt=(sel)=>'<option value="">-- pilih RHK --</option>'+S.rhk.filter(r=>r.Status!=='Nonaktif').map(r=>`<option value="${r.ID_RHK}" ${r.ID_RHK===sel?'selected':''}>${esc(r.RHK)}</option>`).join('');
+const cnt=(arr,key)=>{const o={};arr.forEach(r=>o[r[key]]=(o[r[key]]||0)+1);return o};
+const bars=o=>{const m=Math.max(1,...Object.values(o));return Object.entries(o).map(([k,v])=>`<div class="bx"><em>${esc(k)}</em><i style="width:${v/m*60}%"></i> ${v}</div>`).join('')||'<small>Belum ada data</small>'};
+const bdg=r=>r.Status_Bukti==='Ada'?`<span class="badge">Ada</span>`+(r.Link_Bukti?` <a href="${esc(r.Link_Bukti)}" target="_blank">lihat</a>`:''):'<span class="badge x">Belum</span>';
 
-$('f').addEventListener('submit', async e => {
-  e.preventDefault();
-  const item = {}; FIELDS.forEach(k => item[k] = $(k).value.trim());
-  if (!item.tanggal.startsWith($('bulan').value)) { toast('Tanggal harus berada di bulan rekap yang dipilih.'); return; }
-  item.bulan = item.tanggal.slice(0, 7);
-  $('btnSave').disabled = true; $('btnSave').textContent = 'Menyimpan…';
-  try {
-    const files = await Promise.all([...$('files').files].map(readFile));
-    await call({ action: 'save', item, files });
-    toast('Kegiatan tersimpan'); const t = item.tanggal; resetForm(); $('tanggal').value = t; await load();
-  } catch (err) { toast(err.message, 5000); }
-  $('btnSave').disabled = false; $('btnSave').textContent = 'Simpan kegiatan';
-});
-$('btnReset').onclick = resetForm;
-$('bulan').onchange = () => { $('tanggal').value = ''; resetForm(); load(); };
-$('list').addEventListener('click', async e => {
-  const ed = e.target.dataset.e, dl = e.target.dataset.d;
-  if (ed) { const d = data.find(x => x.id === ed); FIELDS.forEach(k => $(k).value = d[k] || ''); $('formTitle').textContent = 'Ubah kegiatan'; $('f').scrollIntoView({ behavior: 'smooth' }); }
-  if (dl && confirm('Hapus kegiatan ini?')) { try { await call({ action: 'delete', id: dl }); toast('Kegiatan dihapus'); load(); } catch (err) { toast(err.message, 5000); } }
-});
-$('btnDoc').onclick = async () => {
-  if (!data.length) { toast('Belum ada kegiatan untuk dibuat dokumen.'); return; }
-  $('btnDoc').disabled = true; $('btnDoc').textContent = 'Membuat dokumen…';
-  try {
-    const j = await call({ action: 'doc', bulan: $('bulan').value, nama: cfg('nama'), nip: cfg('nip') });
-    toast('Dokumen dibuat di Google Drive'); window.open(j.url, '_blank');
-  } catch (err) { toast(err.message, 5000); }
-  $('btnDoc').disabled = false; $('btnDoc').textContent = 'Buat dokumen bulan ini';
-};
-$('btnSet').onclick = () => { $('url').value = apiUrl(); $('nama').value = cfg('nama'); $('nip').value = cfg('nip'); $('dlg').showModal(); };
-$('fs').addEventListener('submit', e => {
-  if (e.submitter && e.submitter.value === 'ok') { setCfg('url', $('url').value.trim()); setCfg('nama', $('nama').value.trim()); setCfg('nip', $('nip').value.trim()); load(); }
-});
+// ---------- Dashboard ----------
+function dash(){const s=S.settings,k=S.skp,now=BLN[new Date().getMonth()],yr=new Date().getFullYear();
+  $('main').innerHTML=`<div class="card"><h2 style="margin:0">${esc(s.nama||'(isi nama di Pengaturan)')}</h2><div>${esc(s.jabatan||'')} • ${esc(s.sekolah||'')}</div></div>
+  <div class="grid">${[['Hari kerja terisi',new Set(k.map(r=>r.Tanggal)).size],['Total kegiatan',k.length],['Total bukti dukung',k.filter(r=>r.Status_Bukti==='Ada').length],['Bukti belum tersedia',k.filter(r=>r.Status_Bukti!=='Ada').length],['Kegiatan bulan ini',k.filter(r=>r.Bulan===now&&r.Tahun==yr).length]].map(x=>`<div class="card stat"><b>${x[1]}</b><span>${x[0]}</span></div>`).join('')}</div>
+  <div class="row"><div class="card"><h3>Kegiatan per RHK</h3>${bars(cnt(k,'RHK'))}</div><div class="card"><h3>Kegiatan per bulan</h3>${bars(cnt(k,'Bulan'))}</div></div>`}
 
-$('bulan').value = new Date().toISOString().slice(0, 7);
-resetForm(); load();
-</script>
-</body>
-</html>
+// ---------- Input / Edit ----------
+function fInput(){const e=edit||{Tanggal:new Date().toISOString().slice(0,10),Satuan:'kegiatan',Volume:1,Status_Bukti:'Belum Ada'};
+  $('main').innerHTML=`<div class="card"><h2>${edit?'Edit':'Input'} SKP</h2>
+  <div class="row"><div><label>Tanggal</label><input type="date" id="f_t" value="${e.Tanggal}"></div>
+  <div><label>RHK</label><select id="f_r" onchange="kgOpt()">${rhkOpt(e.ID_RHK)}</select></div>
+  <div><label>Kegiatan</label><select id="f_k" onchange="tpl()"></select></div></div>
+  <label>Uraian pekerjaan</label><textarea id="f_u" rows="3">${esc(e.Uraian||'')}</textarea>
+  <label>Output/Hasil</label><textarea id="f_o" rows="2">${esc(e.Output||'')}</textarea>
+  <div class="row"><div><label>Volume</label><input type="number" min="0" id="f_v" value="${e.Volume}"></div>
+  <div><label>Satuan</label><select id="f_s">${SAT.map(x=>`<option ${x===e.Satuan?'selected':''}>${x}</option>`).join('')}</select></div>
+  <div><label>Bukti dukung</label><select id="f_b"><option ${e.Status_Bukti==='Ada'?'selected':''}>Ada</option><option ${e.Status_Bukti!=='Ada'?'selected':''}>Belum Ada</option></select></div></div>
+  <label>Link bukti (Google Drive)</label><input id="f_l" value="${esc(e.Link_Bukti||'')}" placeholder="https://drive.google.com/…">
+  <label>Keterangan (opsional)</label><input id="f_ket" value="${esc(e.Keterangan||'')}">
+  <div class="bar"><button onclick="saveSKP()">SIMPAN</button><button class="g" onclick="edit=null;fInput()">RESET</button></div></div>`;
+  kgOpt(e.Kegiatan)}
+function kgOpt(sel){const r=$('f_r').value;$('f_k').innerHTML='<option value="">-- pilih kegiatan --</option>'+S.keg.filter(k=>k.ID_RHK===r&&k.Status!=='Nonaktif').map(k=>`<option ${k.Nama_Kegiatan===sel?'selected':''}>${esc(k.Nama_Kegiatan)}</option>`).join('')}
+function tpl(){const k=S.keg.find(x=>x.Nama_Kegiatan===$('f_k').value&&x.ID_RHK===$('f_r').value);if(k){$('f_u').value=k.Uraian_Template;$('f_o').value=k.Output_Template}}
+async function saveSKP(){const d={ID:edit?edit.ID:'',Tanggal:$('f_t').value,ID_RHK:$('f_r').value,Kegiatan:$('f_k').value,Uraian:$('f_u').value,Output:$('f_o').value,Volume:$('f_v').value,Satuan:$('f_s').value,Keterangan:$('f_ket').value,Status_Bukti:$('f_b').value,Link_Bukti:$('f_l').value};
+  try{await api(edit?'updateSKP':'saveSKP',d);toast('Tersimpan');edit=null;await load();go('input')}catch(e){toast(e.message,false)}}
+
+// ---------- Data SKP ----------
+function filt(){const q=Q.q.toLowerCase();return S.skp.filter(r=>(!q||Object.values(r).join(' ').toLowerCase().includes(q))&&(!Q.tgl||r.Tanggal===Q.tgl)&&(!Q.bln||r.Bulan===Q.bln)&&(!Q.rhk||r.ID_RHK===Q.rhk)&&(!Q.keg||r.Kegiatan===Q.keg)).sort((a,b)=>a.Tanggal<b.Tanggal?1:-1)}
+function fData(){$('main').innerHTML=`<div class="card"><h2>Data SKP</h2><div class="bar">
+  <input style="max-width:200px" placeholder="Cari…" value="${esc(Q.q)}" onchange="Q.q=this.value;pg=1;tbl()">
+  <input type="date" style="max-width:160px" value="${Q.tgl}" onchange="Q.tgl=this.value;pg=1;tbl()">
+  <select style="max-width:140px" onchange="Q.bln=this.value;pg=1;tbl()"><option value="">Semua bulan</option>${BLN.map(b=>`<option ${b===Q.bln?'selected':''}>${b}</option>`).join('')}</select>
+  <select style="max-width:200px" onchange="Q.rhk=this.value;pg=1;tbl()">${rhkOpt(Q.rhk).replace('-- pilih RHK --','Semua RHK')}</select>
+  <input style="max-width:200px" placeholder="Filter kegiatan" value="${esc(Q.keg)}" onchange="Q.keg=this.value;pg=1;tbl()"></div><div id="tb"></div></div>`;tbl()}
+function tbl(){const a=filt(),P=10,n=Math.max(1,Math.ceil(a.length/P));pg=Math.min(pg,n);
+  $('tb').innerHTML=`<div class="tw"><table><tr><th>Tanggal</th><th>RHK</th><th>Kegiatan</th><th>Uraian</th><th>Vol</th><th>Bukti</th><th>Aksi</th></tr>${a.slice((pg-1)*P,pg*P).map(r=>`<tr><td>${r.Tanggal}</td><td>${esc(r.RHK)}</td><td>${esc(r.Kegiatan)}</td><td>${esc(r.Uraian)}</td><td>${r.Volume} ${esc(r.Satuan)}</td><td>${bdg(r)}</td><td><button class="s" onclick="doEdit('${r.ID}')">Edit</button> <button class="s r" onclick="doDel('${r.ID}')">Hapus</button></td></tr>`).join('')||'<tr><td colspan="7">Tidak ada data</td></tr>'}</table></div>
+  <div class="bar"><button class="g s" onclick="pg=Math.max(1,pg-1);tbl()">‹</button> Hal ${pg}/${n} (${a.length} data) <button class="g s" onclick="pg=Math.min(${n},pg+1);tbl()">›</button></div>`}
+function doEdit(id){edit=S.skp.find(r=>r.ID===id);go('input')}
+async function doDel(id){if(!confirm('Hapus data ini? Tindakan tidak bisa dibatalkan.'))return;try{await api('deleteSKP',{ID:id});toast('Dihapus');await load()}catch(e){toast(e.message,false)}}
+function gsearch(){Q={q:$('gq').value,tgl:'',bln:'',rhk:'',keg:''};pg=1;go('data')}
+
+// ---------- Bukti dukung (upload ke Drive) ----------
+function fBukti(){$('main').innerHTML=`<div class="card"><h2>Bukti Dukung</h2><div class="tw"><table><tr><th>Tanggal</th><th>Kegiatan</th><th>Uraian</th><th>Status</th><th>File</th><th>Upload</th></tr>${[...S.skp].sort((a,b)=>a.Tanggal<b.Tanggal?1:-1).slice(0,100).map(r=>{const f=S.bukti.filter(b=>b.ID_SKP===r.ID).pop();return `<tr><td>${r.Tanggal}</td><td>${esc(r.Kegiatan)}</td><td>${esc(r.Uraian).slice(0,80)}</td><td>${bdg(r)}</td><td>${f?esc(f.Nama_File):'-'}</td><td><input type="file" onchange="up('${r.ID}',this)"></td></tr>`}).join('')}</table></div><small>Menampilkan 100 data terbaru. Maks ±7 MB per file.</small></div>`}
+function up(id,el){const f=el.files[0];if(!f)return;if(f.size>7e6)return toast('File terlalu besar',false);const r=S.skp.find(x=>x.ID===id),fr=new FileReader();
+  fr.onload=async()=>{try{await api('uploadEvidence',{ID_SKP:id,Tanggal:r.Tanggal,Kegiatan:r.Kegiatan,name:f.name,mime:f.type,base64:fr.result.split(',')[1]});toast('Terunggah ke Drive');await load();go('bukti')}catch(e){toast(e.message,false)}};fr.readAsDataURL(f)}
+
+// ---------- Rekap & Laporan ----------
+const pick=()=>`<div class="bar np"><div><label>Tahun</label><input type="number" id="ry" value="${rk.y}" style="width:100px"></div><div><label>Bulan</label><select id="rb">${BLN.map(b=>`<option ${b===rk.b?'selected':''}>${b}</option>`).join('')}</select></div><button onclick="rk={y:$('ry').value,b:$('rb').value};go(page)">Tampilkan</button></div>`;
+const mrows=()=>S.skp.filter(r=>r.Tahun==rk.y&&r.Bulan===rk.b).sort((a,b)=>a.Tanggal<b.Tanggal?-1:1);
+function fRekap(){const a=mrows();$('main').innerHTML=`<div class="card"><h2>Rekap Bulanan</h2>${pick()}<div class="grid"><div class="card stat"><b>${new Set(a.map(r=>r.Tanggal)).size}</b><span>Hari kerja</span></div><div class="card stat"><b>${a.length}</b><span>Kegiatan</span></div><div class="card stat"><b>${a.filter(r=>r.Status_Bukti==='Ada').length}</b><span>Bukti ada</span></div><div class="card stat"><b>${a.filter(r=>r.Status_Bukti!=='Ada').length}</b><span>Bukti belum</span></div></div>
+  <h3>Per RHK</h3>${bars(cnt(a,'RHK'))}<div class="tw"><table><tr><th>No</th><th>Tanggal</th><th>RHK</th><th>Kegiatan</th><th>Output</th><th>Bukti</th></tr>${a.map((r,i)=>`<tr><td>${i+1}</td><td>${r.Tanggal}</td><td>${esc(r.RHK)}</td><td>${esc(r.Kegiatan)}</td><td>${esc(r.Output)}</td><td>${bdg(r)}</td></tr>`).join('')}</table></div></div>`}
+function fLap(){const a=mrows(),s=S.settings;$('main').innerHTML=`<div class="card">${pick()}<div class="bar np"><button onclick="window.print()">CETAK</button><button class="g" onclick="alert('Pada jendela cetak, pilih Printer: Simpan sebagai PDF');window.print()">SIMPAN PDF</button></div>
+  <div id="kop"><h3 style="margin:0">LAPORAN KINERJA HARIAN</h3></div>
+  <table style="min-width:0;width:auto;margin-bottom:10px">${[['Nama',s.nama],['NIP',s.NIP],['Jabatan',s.jabatan],['Unit Kerja',s.unit_kerja],['Sekolah',s.sekolah],['Bulan',rk.b],['Tahun',rk.y]].map(x=>`<tr><td style="border:0;padding:1px 8px 1px 0">${x[0]}</td><td style="border:0;padding:1px">: ${esc(x[1]||'')}</td></tr>`).join('')}</table>
+  <div class="tw"><table><tr><th>No</th><th>Tanggal</th><th>RHK</th><th>Kegiatan</th><th>Uraian Pekerjaan</th><th>Output</th><th>Bukti</th></tr>${a.map((r,i)=>`<tr><td>${i+1}</td><td>${r.Tanggal}</td><td>${esc(r.RHK)}</td><td>${esc(r.Kegiatan)}</td><td>${esc(r.Uraian)}</td><td>${esc(r.Output)}</td><td>${esc(r.Status_Bukti)}</td></tr>`).join('')}</table></div></div>`}
+
+// ---------- Master RHK / Kegiatan ----------
+function fMaster(){$('main').innerHTML=`<div class="card"><h2>Tambah RHK</h2><div class="bar"><input id="m_r" placeholder="Nama RHK" style="max-width:300px"><button onclick="addRHK()">Simpan RHK</button></div></div>
+  <div class="card"><h2>Tambah / Edit Kegiatan</h2><div class="row"><div><label>RHK</label><select id="m_i">${rhkOpt('')}</select></div><div><label>Nama kegiatan</label><input id="m_n"></div></div><label>Template uraian</label><input id="m_u"><label>Template output</label><input id="m_o"><div class="bar"><button onclick="addKeg()">Simpan Kegiatan</button></div></div>
+  <div class="card"><div class="tw"><table><tr><th>RHK</th><th>Kegiatan</th><th>Status</th><th>Aksi</th></tr>${S.keg.map(k=>`<tr><td>${esc((S.rhk.find(r=>r.ID_RHK===k.ID_RHK)||{}).RHK)}</td><td>${esc(k.Nama_Kegiatan)}</td><td>${k.Status}</td><td><button class="s g" onclick="togKeg('${k.ID}')">${k.Status==='Aktif'?'Nonaktifkan':'Aktifkan'}</button></td></tr>`).join('')}</table></div></div>`}
+async function addRHK(){try{await api('saveRHK',{RHK:$('m_r').value,Status:'Aktif'});toast('Tersimpan');await load();go('master')}catch(e){toast(e.message,false)}}
+async function addKeg(){try{await api('saveActivity',{ID_RHK:$('m_i').value,Nama_Kegiatan:$('m_n').value,Uraian_Template:$('m_u').value,Output_Template:$('m_o').value,Status:'Aktif'});toast('Tersimpan');await load();go('master')}catch(e){toast(e.message,false)}}
+async function togKeg(id){const k=S.keg.find(x=>x.ID===id);try{await api('saveActivity',{...k,Status:k.Status==='Aktif'?'Nonaktif':'Aktif'});await load();go('master')}catch(e){toast(e.message,false)}}
+
+// ---------- Pengaturan ----------
+function fSet(){const s=S.settings,f=['nama','NIP','jabatan','unit_kerja','sekolah','NPSN','kecamatan','kabupaten','provinsi','tahun'];
+  $('main').innerHTML=`<div class="card"><h2>Pengaturan</h2><div class="row">${f.map(k=>`<div><label>${k.replace('_',' ')}</label><input id="s_${k}" value="${esc(s[k]||'')}"></div>`).join('')}</div><div class="bar"><button onclick="saveSet()">SIMPAN PENGATURAN</button></div>
+  <h3>Token akses (opsional)</h3><small>Isi sama dengan Script Property TOKEN di Apps Script. Disimpan hanya di browser ini.</small><div class="bar"><input id="s_tok" type="password" value="${esc(token())}" style="max-width:260px"><button class="g" onclick="localStorage.setItem('skp_token',$('s_tok').value);load()">Simpan token</button></div></div>`}
+async function saveSet(){const d={};['nama','NIP','jabatan','unit_kerja','sekolah','NPSN','kecamatan','kabupaten','provinsi','tahun'].forEach(k=>d[k]=$('s_'+k).value);
+  try{S.settings=await api('saveSettings',d);toast('Pengaturan tersimpan')}catch(e){toast(e.message,false)}}
+load();
+</script></body></html>
