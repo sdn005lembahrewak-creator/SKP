@@ -78,7 +78,7 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
 </style>
 </head>
 <body>
-<div id="loading"></div><div id="toast"></div>
+<datalist id="dlSatuan"></datalist><div id="loading"></div><div id="toast"></div>
 <div class="topbar"><button onclick="toggleMenu()">☰</button><b>SKP Harian</b></div>
 <nav class="sidebar" id="side">
  <h1>📋 SKP Harian</h1>
@@ -188,7 +188,7 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
 // ===== KONFIGURASI =====
 // Kosong  = aplikasi dibuka lewat URL Web App Apps Script (otomatis memakai google.script.run)
 // Diisi   = aplikasi di GitHub Pages: tempel URL Web App berakhiran /exec
-const API_URL = "https://script.google.com/macros/s/AKfycbxxWyKmn2S_-SWhvHNTJqSQ7b7gvyGLDxICCFK10l9ZSp4Mpzf7b4gBw-0zALIoZaeS/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwRT_WurmLLoYl5rPijklrvOl_Gt-yhKPAd6IE6Mc5hsfNHrQv5JMD8ISLZ_onMkvbN/exec";
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -291,7 +291,25 @@ async function saveMaster() {
   try { await call('saveMaster', { master: { kegiatan: keg, keterangan: ket } }); MASTER = { kegiatan: keg, keterangan: ket }; fillMaster(); toast('Simpan berhasil'); }
   catch (e) { toast('Gagal menyimpan data: ' + e.message, 1); }
 }
+function capOpts(v) {
+  const L = [0, 25, 50, 75, 100], has = v !== undefined && v !== null && v !== '' && !isNaN(Number(v));
+  const a = has && !L.includes(Number(v)) ? L.concat(Number(v)).sort((x, y) => x - y) : L;
+  return '<option value="">-- pilih --</option>' + a.map(x => `<option value="${x}" ${has && Number(v) === x ? 'selected' : ''}>${x}%</option>`).join('');
+}
+// Jika uraian yang diketik sama dengan kegiatan di Master, satuan & target terisi otomatis
+function matchMaster(el) {
+  const k = MASTER.kegiatan.find(x => x.uraian.trim().toLowerCase() === el.value.trim().toLowerCase());
+  if (!k) return;
+  const d = el.closest('.kg'), s = d.querySelector('.s'), t = d.querySelector('.t'), r = d.querySelector('.r');
+  if (!s.value) s.value = k.satuan;
+  if (!t.value) { t.value = k.target; if (!r.value) r.value = k.target; t.dispatchEvent(new Event('input')); }
+  const ke = d.querySelector('.k'); if (!ke.value) ke.value = MASTER.keterangan[0] || '';
+}
+function fillSatuan() {
+  $('dlSatuan').innerHTML = [...new Set(MASTER.kegiatan.map(k => k.satuan).filter(Boolean))].map(s => `<option value="${esc(s)}">`).join('');
+}
 function renderPick() {
+  fillSatuan();
   const q = $('pickQ').value.toLowerCase();
   $('pickList').innerHTML = MASTER.kegiatan.map((k, i) => ({ k, i })).filter(x => x.k.uraian.toLowerCase().includes(q))
     .map(x => `<div class="pk" onclick="pickKeg(${x.i})"><span>${esc(x.k.uraian)}</span><small>${x.k.target} ${esc(x.k.satuan)}</small></div>`).join('')
@@ -313,16 +331,17 @@ function pickKeg(i) {
 function addRow(it) {
   it = it || {};
   const n = $('rows').children.length + 1, d = document.createElement('div'); d.className = 'kg';
-  d.innerHTML = `<div class="row" style="justify-content:space-between"><label class="rn">${n}. Uraian Pekerjaan / Kegiatan</label><button class="b s r" onclick="delRow(this)">Hapus</button></div><textarea class="u">${esc(it.uraian)}</textarea>
+  d.innerHTML = `<div class="row" style="justify-content:space-between"><label class="rn">${n}. Uraian Pekerjaan / Kegiatan</label><button class="b s r" onclick="delRow(this)">Hapus</button></div><textarea class="u" onchange="matchMaster(this)">${esc(it.uraian)}</textarea>
   <div class="f"><div><label>Target</label><input class="t" inputmode="decimal" value="${it.target ?? ''}"></div>
   <div><label>Realisasi</label><input class="r" inputmode="decimal" value="${it.realisasi ?? ''}"></div>
-  <div><label>Satuan</label><input class="s" value="${esc(it.satuan)}"></div>
-  <div><label>Capaian</label><input class="c" readonly></div></div>
+  <div><label>Satuan</label><input class="s" list="dlSatuan" value="${esc(it.satuan)}"></div>
+  <div><label>Capaian</label><select class="c">${capOpts(it.capaian)}</select></div></div>
   <div class="f2"><div><label>Keterangan (pilih)</label><select onchange="if(this.value)this.closest('.kg').querySelector('.k').value=this.value"><option value="">-- pilih --</option>${MASTER.keterangan.map(k => `<option>${esc(k)}</option>`).join('')}</select></div>
   <div><label>Keterangan (boleh diketik)</label><input class="k" value="${esc(it.keterangan)}"></div></div>`;
+  // Capaian disarankan otomatis (dibulatkan ke 0/25/50/75/100%), tetap bisa diganti lewat pilihan
   const calc = () => { const t = parseFloat(d.querySelector('.t').value), r = parseFloat(d.querySelector('.r').value);
-    d.querySelector('.c').value = t > 0 && !isNaN(r) ? Math.round(r / t * 100) + '%' : ''; };
-  d.querySelectorAll('.t,.r').forEach(i => i.oninput = calc); calc();
+    if (t > 0 && !isNaN(r)) d.querySelector('.c').value = Math.min(100, Math.max(0, Math.round(r / t * 4) * 25)); };
+  d.querySelectorAll('.t,.r').forEach(i => i.oninput = calc);
   $('rows').appendChild(d);
 }
 function delRow(btn) {
@@ -387,7 +406,7 @@ async function saveReport() {
   const items = [];
   for (const d of $('rows').children) {
     const g = c => d.querySelector(c).value.trim();
-    const it = { uraian: g('.u'), target: g('.t'), realisasi: g('.r'), satuan: g('.s'), keterangan: g('.k') };
+    const it = { uraian: g('.u'), target: g('.t'), realisasi: g('.r'), satuan: g('.s'), keterangan: g('.k'), capaian: g('.c') };
     if (!it.uraian && !it.target && !it.realisasi && !it.satuan && !it.keterangan) continue; // baris kosong dilewati
     if (!it.uraian) return toast('Uraian kegiatan tidak boleh kosong', 1);
     if (it.target === '' || isNaN(Number(it.target))) return toast('Target harus berupa angka', 1);
