@@ -42,35 +42,38 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
 #toast.err{background:var(--red)}
 #loading{position:fixed;top:0;left:0;right:0;height:3px;background:var(--pri);display:none;z-index:99}
 /* ===== LAPORAN ===== */
-#report{background:#fff;width:210mm;max-width:100%;margin:0 auto;padding:12mm;font:11pt Arial,sans-serif;color:#000;border:1px solid var(--line)}
-#report h3{text-align:center;font-size:14pt;margin:8mm 0 7mm}
-#report .id td{padding:1px 0;font-size:10.5pt}#report .id td:first-child{width:30mm;font-weight:bold}#report .id td.v{color:#0a7a3a}
-#report table.tb{width:100%;border-collapse:collapse;margin-top:5mm}
-#report .tb th,#report .tb td{border:1px solid #000;padding:2mm;font-size:10pt}
-#report .tb th{background:#d9e1f2;text-align:center}
-#report .tb td{background:#fffbd0;height:9mm}#report .c{text-align:center}
-#report .dok{margin-top:5mm}
-#report .dok th{background:#d9e1f2}
-#report .dok .im{background:#fff;height:58mm;padding:1mm;text-align:center;vertical-align:middle}
-#report .dok .im img{max-width:100%;max-height:56mm;object-fit:contain}
-#report .dok .kt{background:#fffbd0;height:7mm}
-#report .ttd{display:flex;justify-content:space-around;margin-top:6mm;text-align:center;font-size:10.5pt;page-break-inside:avoid}
-#report .ttd div{width:45%}#report .sp{height:24mm}
+.rpt{background:#fff;width:210mm;max-width:100%;margin:0 auto;padding:12mm;font:11pt Arial,sans-serif;color:#000;border:1px solid var(--line)}
+.rpt h3{text-align:center;font-size:14pt;margin:8mm 0 7mm}
+.rpt .id td{padding:1px 0;font-size:10.5pt}.rpt .id td:first-child{width:30mm;font-weight:bold}.rpt .id td.v{color:#0a7a3a}
+.rpt table.tb{width:100%;border-collapse:collapse;margin-top:5mm}
+.rpt .tb th,.rpt .tb td{border:1px solid #000;padding:2mm;font-size:10pt}
+.rpt .tb th{background:#d9e1f2;text-align:center}
+.rpt .tb td{background:#fffbd0;height:9mm}.rpt .c{text-align:center}
+.rpt .dok{margin-top:5mm}
+.rpt .dok th{background:#d9e1f2}
+.rpt .dok .im{background:#fff;height:58mm;padding:1mm;text-align:center;vertical-align:middle}
+.rpt .dok .im img{max-width:100%;max-height:56mm;object-fit:contain}
+.rpt .dok .kt{background:#fffbd0;height:7mm}
+.rpt .dok.many .im{height:46mm}.rpt .dok.many .im img{max-height:44mm}
+.rpt .rk td{height:auto;padding:.7mm 1.5mm;font-size:9pt;background:#fff}.rpt .rk tr.we td{background:#ececec}.rpt .rk th{font-size:9pt;padding:1mm}
+.rpt.rekap .sp{height:16mm}.rpt.rekap h3{margin:2mm 0 4mm}.rpt{margin-bottom:14px}
+.rpt .ttd{display:flex;justify-content:space-around;margin-top:6mm;text-align:center;font-size:10.5pt;page-break-inside:avoid}
+.rpt .ttd div{width:45%}.rpt .sp{height:24mm}
 @page{size:A4 portrait;margin:8mm}
 @media print{
  body{background:#fff}
  .sidebar,.topbar,.noprint,#toast{display:none!important}
  .main{margin:0;padding:0;max-width:none}
- .view{display:none!important}#v-cetak{display:block!important}
- #report{border:0;padding:0;width:100%;margin:0}
- #report .dok{page-break-inside:avoid}
+ .view{display:none!important}.view.printable.on{display:block!important}
+ .rpt{border:0;padding:0;width:100%;margin:0}
+ .rpt .dok tr{page-break-inside:avoid}.rpt+.rpt{page-break-before:always}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 @media(max-width:800px){
  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:none}
  .topbar{display:flex}.main{margin:50px 0 0;padding:12px}
  .kg .f{grid-template-columns:1fr 1fr}
- #report{padding:4mm;font-size:9pt}
+ .rpt{padding:4mm;font-size:9pt}
 }
 </style>
 </head>
@@ -79,7 +82,7 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
 <div class="topbar"><button onclick="toggleMenu()">☰</button><b>SKP Harian</b></div>
 <nav class="sidebar" id="side">
  <h1>📋 SKP Harian</h1>
- <a data-v="dashboard">Dashboard</a><a data-v="input">Input SKP</a><a data-v="riwayat">Riwayat</a><a data-v="cetak">Cetak</a><a data-v="master">Master Kegiatan</a><a data-v="pengaturan">Pengaturan</a>
+ <a data-v="dashboard">Dashboard</a><a data-v="input">Input SKP</a><a data-v="riwayat">Riwayat</a><a data-v="cetak">Cetak</a><a data-v="rekap">Rekap Bulanan</a><a data-v="master">Master Kegiatan</a><a data-v="pengaturan">Pengaturan</a>
 </nav>
 
 <main class="main">
@@ -106,7 +109,9 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
   <input id="pickQ" placeholder="Cari kegiatan..." oninput="renderPick()" style="margin-top:8px"><div id="pickList"></div></div>
  <div class="card"><b>Kegiatan</b><div id="rows" style="margin-top:8px"></div>
   <button class="b g" onclick="addRow()">+ Tambah baris</button></div>
- <div class="card"><b>Dokumentasi Foto</b><div class="ph" id="photos" style="margin-top:8px"></div></div>
+ <div class="card"><b>Dokumentasi Foto</b><div class="ph" id="photos" style="margin-top:8px"></div>
+  <div class="row" style="margin-top:8px"><button class="b g" id="btnAddFoto" onclick="addFoto()">+ Tambah Foto</button>
+  <button class="b g" id="btnDelFoto" onclick="delFoto()">− Hapus Foto Terakhir</button><small id="fotoInfo" style="color:var(--mut)"></small></div></div>
  <div class="row"><button class="b" id="btnSave" onclick="saveReport()">Simpan</button>
   <button class="b g" onclick="show('riwayat')">Batal</button></div>
 </section>
@@ -124,7 +129,7 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
 </section>
 
 <!-- CETAK -->
-<section class="view" id="v-cetak">
+<section class="view printable" id="v-cetak">
  <div class="noprint">
   <h2>Cetak Laporan</h2>
   <div class="card row">
@@ -134,7 +139,22 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
    <button class="b g" onclick="savePdf()">SIMPAN PDF</button>
   </div>
  </div>
- <div id="report"><p class="noprint" style="text-align:center;color:#667085">Pilih tanggal laporan.</p></div>
+ <div id="report" class="rpt"><p class="noprint" style="text-align:center;color:#667085">Pilih tanggal laporan.</p></div>
+</section>
+
+<!-- REKAP -->
+<section class="view printable" id="v-rekap">
+ <div class="noprint">
+  <h2>Rekap Bulanan</h2>
+  <div class="card row">
+   <input type="month" id="rBln" style="max-width:180px" onchange="loadMon()">
+   <button class="b g" onclick="printMon(false)">CETAK REKAP</button>
+   <button class="b" onclick="printMon(true)">CETAK LAPORAN 1 BULAN</button>
+   <button class="b g" onclick="printMon(true,true)">SIMPAN PDF</button>
+  </div>
+  <p style="color:var(--mut);margin-top:-6px">Rekap menyesuaikan jumlah hari pada bulan yang dipilih. "Laporan 1 Bulan" = rekap + semua laporan harian dalam satu file.</p>
+ </div>
+ <div id="rreport"></div>
 </section>
 
 <!-- MASTER -->
@@ -205,6 +225,7 @@ function show(v) {
   if (v === 'dashboard' || v === 'riwayat' || v === 'cetak') refresh().then(() => { if (v === 'cetak') fillSel(); });
   if (v === 'pengaturan') fillPeg();
   if (v === 'master') fillMaster();
+  if (v === 'rekap') { if (!$('rBln').value) $('rBln').value = today().slice(0, 7); loadMon(); }
   if (v === 'input' && !EDIT && !$('iTgl').value) newInput(today());
 }
 function toggleMenu() { $('side').classList.toggle('open'); }
@@ -292,7 +313,7 @@ function pickKeg(i) {
 function addRow(it) {
   it = it || {};
   const n = $('rows').children.length + 1, d = document.createElement('div'); d.className = 'kg';
-  d.innerHTML = `<label>${n}. Uraian Pekerjaan / Kegiatan</label><textarea class="u">${esc(it.uraian)}</textarea>
+  d.innerHTML = `<div class="row" style="justify-content:space-between"><label class="rn">${n}. Uraian Pekerjaan / Kegiatan</label><button class="b s r" onclick="delRow(this)">Hapus</button></div><textarea class="u">${esc(it.uraian)}</textarea>
   <div class="f"><div><label>Target</label><input class="t" inputmode="decimal" value="${it.target ?? ''}"></div>
   <div><label>Realisasi</label><input class="r" inputmode="decimal" value="${it.realisasi ?? ''}"></div>
   <div><label>Satuan</label><input class="s" value="${esc(it.satuan)}"></div>
@@ -304,11 +325,31 @@ function addRow(it) {
   d.querySelectorAll('.t,.r').forEach(i => i.oninput = calc); calc();
   $('rows').appendChild(d);
 }
+function delRow(btn) {
+  const d = btn.closest('.kg');
+  if ([...d.querySelectorAll('textarea,input')].some(i => i.value.trim()) && !confirm('Hapus kegiatan ini?')) return;
+  d.remove(); if (!$('rows').children.length) addRow();
+  [...$('rows').children].forEach((x, i) => x.querySelector('.rn').textContent = (i + 1) + '. Uraian Pekerjaan / Kegiatan');
+}
 function buildPhotos() {
   $('photos').innerHTML = FOTO.map((f, i) => `<div class="kg"><b>Foto ${i + 1}</b>
    <img id="im${i}" ${f.data || f.url ? `src="${f.data || f.url}" style="display:block"` : ''}>
    <input type="file" accept="image/*" onchange="pickFoto(${i},this)" style="margin-top:6px">
    <label>Keterangan Foto ${i + 1}</label><input value="${esc(f.ket)}" oninput="FOTO[${i}].ket=this.value"></div>`).join('');
+  $('btnAddFoto').disabled = FOTO.length >= 10;
+  $('btnDelFoto').style.display = FOTO.length > 4 ? '' : 'none';
+  $('fotoInfo').textContent = FOTO.length + ' dari maks. 10 foto';
+}
+function addFoto() { if (FOTO.length >= 10) return toast('Maksimal 10 foto', 1); FOTO.push({}); buildPhotos(); }
+function delFoto() {
+  if (FOTO.length <= 4) return;
+  const l = FOTO[FOTO.length - 1];
+  if ((l.data || l.url || l.ket) && !confirm('Hapus Foto ' + FOTO.length + '?')) return;
+  FOTO.pop(); buildPhotos();
+}
+function trimFoto() {
+  while (FOTO.length > 4 && !FOTO[FOTO.length - 1].url && !FOTO[FOTO.length - 1].ket) FOTO.pop();
+  while (FOTO.length < 4) FOTO.push({});
 }
 function compress(file, max = 1000, q = .7) {
   return new Promise((res, rej) => { const fr = new FileReader();
@@ -336,7 +377,7 @@ async function editReport(t) {
     const r = await call('get', { tanggal: t });
     newInput(t); EDIT = t; $('iJudul').textContent = 'Edit SKP Harian';
     $('rows').innerHTML = ''; r.items.forEach(addRow); while ($('rows').children.length < 5) addRow();
-    FOTO = r.fotos.map(f => ({ url: f.url, ket: f.ket })); buildPhotos();
+    FOTO = r.fotos.map(f => ({ url: f.url, ket: f.ket })); trimFoto(); buildPhotos();
   } catch (e) { toast('Gagal memuat data: ' + e.message, 1); }
 }
 async function saveReport() {
@@ -382,20 +423,72 @@ async function loadPrint(t) {
 function reportHTML(r) {
   let rows = r.items.map((x, i) => `<tr><td class="c">${i + 1}</td><td>${esc(x.uraian)}</td><td class="c">${x.target}</td><td class="c">${x.realisasi}</td><td class="c">${esc(x.satuan)}</td><td class="c">${x.capaian}%</td><td>${esc(x.keterangan)}</td></tr>`).join('');
   for (let i = r.items.length; i < 6; i++) rows += `<tr><td class="c">${i + 1}</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
-  const f = r.fotos;
-  const im = i => `<td class="im" width="50%">${f[i].url ? `<img src="${esc(f[i].url)}">` : ''}</td>`;
-  const kt = i => `<td class="kt">Keterangan foto ${i + 1}: ${esc(f[i].ket)}</td>`;
+  const f = r.fotos; let n = 0;
+  f.forEach((x, i) => { if (x.url || x.ket) n = i + 1; }); n = Math.max(4, n); if (n % 2) n++;
+  const g = i => f[i] || {};
+  const im = i => `<td class="im" width="50%">${g(i).url ? `<img src="${esc(g(i).url)}">` : ''}</td>`;
+  const kt = i => `<td class="kt">Keterangan foto ${i + 1}: ${esc(g(i).ket)}</td>`;
+  let ph = ''; for (let i = 0; i < n; i += 2) ph += `<tr>${im(i)}${im(i + 1)}</tr><tr>${kt(i)}${kt(i + 1)}</tr>`;
   return `<h3>LAPORAN BUKTI DUKUNG SKP HARIAN</h3>
   <table class="id">
    <tr><td>Nama</td><td class="v">${esc(PEG.nama)}</td></tr><tr><td>NIP</td><td class="v">${esc(PEG.nip)}</td></tr>
    <tr><td>Jabatan</td><td class="v">${esc(PEG.jabatan)}</td></tr><tr><td>Unit Kerja</td><td class="v">${esc(PEG.unit)}</td></tr>
    <tr><td>Hari / Tanggal</td><td class="v">${fmtLong(r.tanggal)}</td></tr></table>
   <table class="tb"><tr><th>No</th><th>Uraian Pekerjaan / Kegiatan</th><th>Target</th><th>Realisasi</th><th>Satuan</th><th>Capaian</th><th>Keterangan</th></tr>${rows}</table>
-  <table class="tb dok"><tr><th colspan="2">DOKUMENTASI FOTO</th></tr>
-   <tr>${im(0)}${im(1)}</tr><tr>${kt(0)}${kt(1)}</tr><tr>${im(2)}${im(3)}</tr><tr>${kt(2)}${kt(3)}</tr></table>
-  <div class="ttd"><div>Mengetahui,<br>Atasan Langsung<div class="sp"></div><b><u>${esc(PEG.atasan)}</u></b><br>NIP. ${esc(PEG.nipAtasan)}</div>
+  <table class="tb dok${n > 4 ? ' many' : ''}"><tr><th colspan="2">DOKUMENTASI FOTO</th></tr>${ph}</table>
+  ${sigHTML()}`;
+}
+function sigHTML() {
+  return `<div class="ttd"><div>Mengetahui,<br>Atasan Langsung<div class="sp"></div><b><u>${esc(PEG.atasan)}</u></b><br>NIP. ${esc(PEG.nipAtasan)}</div>
    <div><br>Pegawai yang bersangkutan<div class="sp"></div><b><u>${esc(PEG.nama)}</u></b><br>NIP. ${esc(PEG.nip)}</div></div>`;
 }
+
+// ===== REKAP BULANAN =====
+const BLN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+const HR = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+let MON = null, MODE = 'rekap';
+function rekapHTML(bln, reps) {
+  const [y, m] = bln.split('-').map(Number), n = new Date(y, m, 0).getDate(), map = {};
+  reps.forEach(r => map[r.tanggal] = r);
+  let rows = '', tl = 0, tk = 0, tf = 0;
+  for (let d = 1; d <= n; d++) {
+    const t = bln + '-' + pad(d), r = map[t], h = HR[new Date(t + 'T12:00:00').getDay()], we = h === 'Sabtu' || h === 'Minggu';
+    const lbl = `<td class="c">${d}</td><td>${h}, ${d} ${BLN[m - 1]} ${y}</td>`;
+    if (r) {
+      const cap = Math.round(r.items.reduce((a, x) => a + x.capaian, 0) / r.items.length), ft = r.fotos.filter(x => x.url).length;
+      const ket = [...new Set(r.items.map(x => x.keterangan).filter(Boolean))].join(', ');
+      tl++; tk += r.items.length; tf += ft;
+      rows += `<tr class="${we ? 'we' : ''}">${lbl}<td class="c">${r.items.length}</td><td class="c">${cap}%</td><td class="c">${ft}</td><td>${esc(ket)}</td></tr>`;
+    } else rows += `<tr class="${we ? 'we' : ''}">${lbl}<td class="c">-</td><td class="c">-</td><td class="c">-</td><td></td></tr>`;
+  }
+  return `<div class="rpt rekap"><h3>REKAPITULASI LAPORAN BUKTI DUKUNG SKP HARIAN</h3>
+  <table class="id"><tr><td>Nama</td><td class="v">${esc(PEG.nama)}</td></tr><tr><td>NIP</td><td class="v">${esc(PEG.nip)}</td></tr>
+   <tr><td>Jabatan</td><td class="v">${esc(PEG.jabatan)}</td></tr><tr><td>Unit Kerja</td><td class="v">${esc(PEG.unit)}</td></tr>
+   <tr><td>Bulan</td><td class="v">${BLN[m - 1]} ${y}</td></tr></table>
+  <table class="tb rk"><tr><th>No</th><th>Hari / Tanggal</th><th>Jumlah Kegiatan</th><th>Rata-rata Capaian</th><th>Jumlah Foto</th><th>Keterangan</th></tr>${rows}
+   <tr><th colspan="2">JUMLAH</th><th>${tk}</th><th>-</th><th>${tf}</th><th>${tl} laporan dari ${n} hari</th></tr></table>${sigHTML()}</div>`;
+}
+async function loadMon() {
+  const b = $('rBln').value; if (!b) return toast('Pilih bulan dulu', 1);
+  try { MON = { bln: b, reps: await call('getBulan', { bulan: b }) }; renderMon('rekap'); }
+  catch (e) { MON = null; toast('Gagal memuat data: ' + e.message, 1); }
+}
+function renderMon(mode) {
+  MODE = mode; if (!MON) return;
+  $('rreport').innerHTML = rekapHTML(MON.bln, MON.reps) + (mode === 'full' ? MON.reps.map(r => `<div class="rpt">${reportHTML(r)}</div>`).join('') : '');
+}
+function waitImgs(el) {
+  const ps = [...el.querySelectorAll('img')].map(i => i.complete ? 1 : new Promise(r => { i.onload = i.onerror = r; }));
+  return Promise.race([Promise.all(ps), new Promise(r => setTimeout(r, 20000))]);
+}
+async function printMon(full, pdf) {
+  await loadMon(); if (!MON) return;
+  if (!MON.reps.length) return toast('Belum ada laporan pada bulan ini', 1);
+  renderMon(full ? 'full' : 'rekap'); await waitImgs($('rreport'));
+  const old = document.title; if (pdf) document.title = 'SKP_Bulan_' + MON.bln;
+  window.print(); document.title = old;
+}
+window.addEventListener('afterprint', () => { if (MODE === 'full') renderMon('rekap'); });
 function doPrint() { if (!CUR) return toast('Pilih tanggal laporan dulu', 1); window.print(); }
 function savePdf() {
   if (!CUR) return toast('Pilih tanggal laporan dulu', 1);
