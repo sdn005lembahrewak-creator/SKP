@@ -8,11 +8,11 @@
 :root{--bg:#f4f6fa;--card:#fff;--line:#d9dee7;--pri:#1f4e9c;--txt:#1d2433;--mut:#667085;--red:#c0392b}
 *{box-sizing:border-box}
 body{margin:0;font:15px/1.5 system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--txt)}
-.sidebar{position:fixed;inset:0 auto 0 0;width:220px;background:#16264a;color:#fff;padding:16px 10px;z-index:20;transition:transform .2s}
+.sidebar{position:fixed;inset:0 auto 0 0;width:220px;background:#1e1b4b;color:#fff;padding:16px 10px;z-index:20;transition:transform .2s}
 .sidebar h1{font-size:16px;margin:4px 10px 18px}
 .sidebar a{display:block;padding:11px 12px;border-radius:8px;color:#cfd8ee;text-decoration:none;cursor:pointer;margin-bottom:4px}
-.sidebar a.on,.sidebar a:hover{background:#2a4380;color:#fff}
-.topbar{display:none;position:fixed;top:0;left:0;right:0;height:50px;background:#16264a;color:#fff;align-items:center;padding:0 12px;z-index:15;gap:12px}
+.sidebar a.on,.sidebar a:hover{background:#4338ca;color:#fff}
+.topbar{display:none;position:fixed;top:0;left:0;right:0;height:50px;background:#1e1b4b;color:#fff;align-items:center;padding:0 12px;z-index:15;gap:12px}
 .topbar button{background:none;border:0;color:#fff;font-size:24px}
 .main{margin-left:220px;padding:22px;max-width:1100px}
 .view{display:none}.view.on{display:block}
@@ -24,7 +24,7 @@ label{display:block;font-size:13px;color:var(--mut);margin:8px 0 3px}
 input,textarea,select{width:100%;padding:9px;border:1px solid var(--line);border-radius:7px;font:inherit;background:#fff}
 textarea{resize:vertical;min-height:44px}
 button.b{background:var(--pri);color:#fff;border:0;border-radius:8px;padding:10px 16px;font:inherit;cursor:pointer}
-button.b.g{background:#e9edf5;color:var(--txt)}button.b.r{background:var(--red)}button.b.s{padding:5px 9px;font-size:13px}
+button.b.g{background:#e9edf5;color:var(--txt)}button.b.r{background:var(--red)}button.b.rd{background:var(--red)}button.b.sm{padding:5px 9px;font-size:13px}button.b.s{padding:5px 9px;font-size:13px}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .tw{overflow-x:auto}
 table.t{width:100%;border-collapse:collapse}
@@ -35,30 +35,76 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
 .ph{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 .ph img{width:100%;height:150px;object-fit:contain;background:#eee;border-radius:6px;display:none}
 .badge{padding:2px 8px;border-radius:10px;font-size:12px;background:#e3f4e8;color:#1b6b3a}.badge.w{background:#fdf0d5;color:#8a5a00}
+.ttdp{display:none;max-height:90px;max-width:100%;background:#fff;border:1px dashed var(--line);border-radius:6px;padding:4px;margin-bottom:6px}
+.rpt .sp{display:flex;justify-content:center;align-items:flex-end}.rpt .sp img{height:100%;max-width:100%;object-fit:contain;mix-blend-mode:multiply}
+#login{display:none;position:fixed;inset:0;background:#1e1b4b;align-items:center;justify-content:center;z-index:200;padding:16px;overflow:auto}
+body.locked #login{display:flex}body.locked .sidebar,body.locked .topbar,body.locked .main{display:none}
+#login .box{background:#fff;border-radius:12px;padding:24px;width:100%;max-width:360px}
+#login h1{margin:0 0 2px;font-size:20px}#login .ver{color:var(--mut);font-size:13px;margin-bottom:10px}
+#lgMsg{color:var(--red);font-size:13px;min-height:18px;margin-top:8px}
+.ulbl{position:absolute;bottom:14px;left:10px;right:10px;color:#cfd8ee;font-size:13px}
 #pickList{max-height:260px;overflow:auto;margin-top:8px}
 .pk{display:flex;justify-content:space-between;gap:10px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;cursor:pointer;background:#fffbe0}
 .pk:hover{background:#fff3a8}.pk small{color:var(--mut);white-space:nowrap}
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:8px;display:none;z-index:99}
 #toast.err{background:var(--red)}
 #loading{position:fixed;top:0;left:0;right:0;height:3px;background:var(--pri);display:none;z-index:99}
+/* ===== TAMPILAN MODERN ===== */
+:root{--bg:#f4f5fb;--line:#e6e8f0;--pri:#4f46e5;--txt:#1e2235;--mut:#6b7280}
+body{font-family:Inter,system-ui,"Segoe UI",Arial,sans-serif;background:var(--bg)}
+.sidebar{background:linear-gradient(180deg,#1e1b4b,#312e81);box-shadow:4px 0 24px rgba(30,27,75,.18)}
+.sidebar a{display:flex;gap:10px;align-items:center;border-radius:12px;padding:11px 14px;transition:background .15s}
+.sidebar a.on{background:rgba(255,255,255,.16);color:#fff}.sidebar a:hover{background:rgba(255,255,255,.1)}
+.main{max-width:1180px}h2{font-size:22px;font-weight:700}
+.card{border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.05)}
+button.b{border-radius:10px;font-weight:600;transition:filter .15s,transform .05s}button.b:hover{filter:brightness(1.08)}button.b:active{transform:scale(.98)}
+button.b.g{background:#eef0fb;color:#3730a3}
+input,select,textarea{border-radius:10px;border:1px solid #dfe3ee;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--pri);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
+table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);background:#f8f9fd}
+.kg{border-radius:14px}.pk{border-radius:12px;background:#f7f7ff}.pk:hover{background:#ecebff}
+.badge{font-weight:600}
+#login{background:linear-gradient(135deg,#1e1b4b,#4f46e5)}#login .box{border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.hero{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border-radius:20px;padding:22px 24px;margin-bottom:16px;box-shadow:0 10px 30px rgba(79,70,229,.3)}
+.hero small{opacity:.8}.hero b{display:block;font-size:24px;margin:2px 0}.hero div div{opacity:.85;font-size:14px}
+.hero button.b{background:#fff;color:#4338ca}
+.stat{display:flex;gap:14px;align-items:center}.stat i{font-style:normal;font-size:22px;width:46px;height:46px;border-radius:14px;background:#eef0fb;display:grid;place-items:center}
+.rings{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.ringc{text-align:center}.ringc svg{width:132px;height:132px}
+.rg-bg{fill:none;stroke:#eef0f6;stroke-width:12}.rg-fg{fill:none;stroke-width:12;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.rg-t{font:700 24px Inter,system-ui,sans-serif;text-anchor:middle;fill:var(--txt)}
+.ringc b{display:block;margin-top:6px}.ringc span{color:var(--mut);font-size:13px}
+#pgBox{display:none;position:fixed;inset:0;background:rgba(17,17,40,.55);z-index:300;align-items:center;justify-content:center;padding:16px}
+.pgc{background:#fff;border-radius:20px;padding:26px 30px;text-align:center;width:300px;max-width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.pgc svg{width:140px;height:140px}.pgc b{display:block;margin-top:6px;font-size:16px}.pgc span{display:block;color:var(--mut);font-size:13px;min-height:20px}
+.pgc small{display:block;color:var(--mut);font-size:11px;margin-top:10px}
+.pgbar{height:8px;background:#eef0f6;border-radius:8px;margin-top:10px;overflow:hidden}.pgbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4f46e5,#7c3aed);transition:width .25s linear}
+.mbg{display:none;position:fixed;inset:0;background:rgba(17,17,40,.55);z-index:250;align-items:center;justify-content:center;padding:16px}
+#photoDrop.over{outline:2px dashed var(--pri);outline-offset:-6px;background:#f7f7ff}
 /* ===== LAPORAN ===== */
 .rpt{background:#fff;width:210mm;max-width:100%;margin:0 auto;padding:12mm;font:11pt Arial,sans-serif;color:#000;border:1px solid var(--line)}
-.rpt h3{text-align:center;font-size:14pt;margin:8mm 0 7mm}
+.rpt h3{text-align:center;font-size:14pt;margin:2mm 0 5mm}
 .rpt .id td{padding:1px 0;font-size:10.5pt}.rpt .id td:first-child{width:30mm;font-weight:bold}.rpt .id td.v{color:#0a7a3a}
 .rpt table.tb{width:100%;border-collapse:collapse;margin-top:5mm}
 .rpt .tb th,.rpt .tb td{border:1px solid #000;padding:2mm;font-size:10pt}
 .rpt .tb th{background:#d9e1f2;text-align:center}
-.rpt .tb td{background:#fffbd0;height:9mm}.rpt .c{text-align:center}
+.rpt .tb td{background:#fffbd0;height:8mm}.rpt .c{text-align:center}
 .rpt .dok{margin-top:5mm}
 .rpt .dok th{background:#d9e1f2}
-.rpt .dok .im{background:#fff;height:58mm;padding:1mm;text-align:center;vertical-align:middle}
-.rpt .dok .im img{max-width:100%;max-height:56mm;object-fit:contain}
-.rpt .dok .kt{background:#fffbd0;height:7mm}
-.rpt .dok.many .im{height:46mm}.rpt .dok.many .im img{max-height:44mm}
-.rpt .rk td{height:auto;padding:.7mm 1.5mm;font-size:9pt;background:#fff}.rpt .rk tr.we td{background:#ececec}.rpt .rk th{font-size:9pt;padding:1mm}
-.rpt.rekap .sp{height:16mm}.rpt.rekap h3{margin:2mm 0 4mm}.rpt{margin-bottom:14px}
+.rpt .dok .im{background:#fff;height:38mm;padding:1mm;text-align:center;vertical-align:middle}
+.rpt .dok .im img{max-width:100%;max-height:36mm;object-fit:contain}
+.rpt .dok .kt{background:#fffbd0;height:6mm}
+.rpt .dok.many .im{height:38mm}.rpt .dok.many .im img{max-height:36mm}
+.rpt .rk{table-layout:fixed}.rpt .rk th{font-size:9pt;padding:1.2mm}
+.rpt .rk td{height:auto;padding:1.2mm 1.5mm;font-size:9pt;vertical-align:middle;word-wrap:break-word}
+.rpt .rk tr.dh td{background:#fff;text-align:center;font-weight:bold}.rpt .rk tr.dh td small{font-weight:400;color:#555}
+.rpt .rk td.im2{text-align:center;padding:1mm}.rpt .rk td.im2 img{max-height:26mm;max-width:100%;object-fit:contain}
+.rpt .rk thead{display:table-header-group}.rpt .rk tr{page-break-inside:avoid}
+.rpt.rekap{width:297mm;max-width:none;page:rk}#rreport{overflow-x:auto}
+@page rk{size:A4 landscape;margin:8mm}
+.rpt.rekap .sp{height:32mm}.rpt.rekap h3{margin:2mm 0 4mm}.rpt{margin-bottom:14px}
 .rpt .ttd{display:flex;justify-content:space-around;margin-top:6mm;text-align:center;font-size:10.5pt;page-break-inside:avoid}
-.rpt .ttd div{width:45%}.rpt .sp{height:24mm}
+.rpt .ttd>div{width:45%}.rpt .ttd .sp{width:100%}.rpt .sp{height:38mm;margin-bottom:-3mm}.rpt .ttd>div:last-child .sp img{height:78%}
 @page{size:A4 portrait;margin:8mm}
 @media print{
  body{background:#fff}
@@ -66,6 +112,7 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
  .main{margin:0;padding:0;max-width:none}
  .view{display:none!important}.view.printable.on{display:block!important}
  .rpt{border:0;padding:0;width:100%;margin:0}
+ .rpt.rekap{width:100%}#rreport{overflow:visible}
  .rpt .dok tr{page-break-inside:avoid}.rpt+.rpt{page-break-before:always}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
@@ -77,25 +124,59 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
 }
 </style>
 </head>
-<body>
+<body class="locked">
 <datalist id="dlSatuan"></datalist><div id="loading"></div><div id="toast"></div>
+<div class="mbg" id="drvBox"><div class="pgc" style="width:420px;text-align:left">
+ <b style="font-size:17px">☁️ Ambil dari Google Drive</b>
+ <label>Link file atau folder (satu link per baris)</label>
+ <textarea id="drvLinks" style="min-height:110px" placeholder="https://drive.google.com/file/d/....&#10;https://drive.google.com/drive/folders/...."></textarea>
+ <small>Pastikan link dibagikan ke "Siapa saja yang memiliki link". Folder: gambar di dalamnya diambil sesuai sisa kotak foto.</small>
+ <div class="row" style="margin-top:12px"><button class="b" onclick="driveImport()">Ambil Foto</button><button class="b g" onclick="$('drvBox').style.display='none'">Batal</button></div>
+</div></div>
+<div id="pgBox"><div class="pgc">
+ <svg viewBox="0 0 120 120"><circle class="rg-bg" cx="60" cy="60" r="52"/><circle id="pgRing" cx="60" cy="60" r="52" transform="rotate(-90 60 60)" style="fill:none;stroke:#4f46e5;stroke-width:12;stroke-linecap:round;stroke-dasharray:326.73;stroke-dashoffset:326.73;transition:stroke-dashoffset .25s linear"/><text id="pgPct" class="rg-t" x="60" y="68">0%</text></svg>
+ <b id="pgTitle">Menyimpan...</b><span id="pgLbl"></span>
+ <div class="pgbar"><i id="pgBar"></i></div><small>Mohon tunggu, jangan tutup halaman ini.</small>
+</div></div>
+<div id="login"><div class="box">
+ <h1>📋 SKP Harian</h1><div class="ver lbl-ver"></div>
+ <div id="lgForm">
+  <label>Username</label><input id="lgUser" autocomplete="username" autocapitalize="none">
+  <label>Password</label><input id="lgPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+  <div id="lgMsg"></div><br><button class="b" style="width:100%" onclick="doLogin()">Masuk</button>
+  <p style="font-size:12px;color:var(--mut);margin-bottom:0">Belum punya akun? Hubungi admin untuk mendapatkan Username dan Password.</p>
+  <p id="lgFirst" style="display:none;font-size:13px;margin-bottom:0"><a href="#" onclick="lgSetup(true);return false">Pertama kali memakai aplikasi? Buat akun admin</a></p>
+ </div>
+ <div id="lgSetup" style="display:none">
+  <b>Buat akun pertama</b><p style="font-size:12px;color:var(--mut)">Dibuat sekali, memakai kode key admin dari Code.gs. Data lama (jika ada) otomatis menjadi milik akun ini.</p>
+  <label>Username</label><input id="bsUser" autocapitalize="none">
+  <label>Password (min. 6 karakter)</label><input id="bsPass" type="password">
+  <label>Kode Key Admin</label><input id="bsKey" type="password" onkeydown="if(event.key==='Enter')doBootstrap()">
+  <br><button class="b" style="width:100%" onclick="doBootstrap()">Buat Akun &amp; Masuk</button>
+  <p style="font-size:13px;margin-bottom:0"><a href="#" onclick="lgSetup(false);return false">&larr; Kembali ke login</a></p>
+ </div>
+</div></div>
 <div class="topbar"><button onclick="toggleMenu()">☰</button><b>SKP Harian</b></div>
 <nav class="sidebar" id="side">
- <h1>📋 SKP Harian</h1>
- <a data-v="dashboard">Dashboard</a><a data-v="input">Input SKP</a><a data-v="riwayat">Riwayat</a><a data-v="cetak">Cetak</a><a data-v="rekap">Rekap Bulanan</a><a data-v="master">Master Kegiatan</a><a data-v="pengaturan">Pengaturan</a>
+ <h1>📋 SKP Harian <small class="lbl-ver" style="display:block;font-weight:400;color:#8fa3d6"></small></h1>
+ <a data-v="dashboard"><span>📊</span>Dashboard</a><a data-v="input"><span>✍️</span>Input SKP</a><a data-v="riwayat"><span>🗂️</span>Riwayat</a><a data-v="cetak"><span>🖨️</span>Cetak</a><a data-v="rekap"><span>📅</span>Rekap Bulanan</a><a data-v="master"><span>📋</span>Master Kegiatan</a><a data-v="pengaturan"><span>⚙️</span>Pengaturan</a><a data-v="admin"><span>🛡️</span>Admin</a>
+<div class="ulbl"><div id="uLbl" style="margin-bottom:8px"></div><a onclick="logout()" style="background:#4338ca;text-align:center">Keluar</a></div>
 </nav>
 
 <main class="main">
 <!-- DASHBOARD -->
 <section class="view" id="v-dashboard">
- <h2>Dashboard</h2>
- <div class="card"><b id="dNama">-</b><div style="color:var(--mut)" id="dJab">-</div></div>
+ <div class="hero"><div><small>Selamat datang</small><b id="dNama">-</b><div id="dJab">-</div></div>
+  <button class="b" onclick="newInput(today())">+ Input SKP Hari Ini</button></div>
  <div class="grid">
-  <div class="card stat"><b id="dLap">0</b><span>Jumlah laporan</span></div>
-  <div class="card stat"><b id="dKeg">0</b><span>Jumlah kegiatan</span></div>
-  <div class="card stat"><b id="dHari">-</b><span>Laporan hari ini</span></div>
+  <div class="card stat"><i>📄</i><div><b id="dLap">0</b><span>Jumlah laporan</span></div></div>
+  <div class="card stat"><i>✅</i><div><b id="dKeg">0</b><span>Jumlah kegiatan</span></div></div>
+  <div class="card stat"><i>🗓️</i><div><b id="dHari">-</b><span>Laporan hari ini</span></div></div>
  </div>
- <button class="b" onclick="newInput(today())">+ Input SKP Hari Ini</button>
+ <div class="row" style="margin:22px 0 12px;justify-content:space-between"><h2 style="margin:0">Progres SKP</h2>
+  <input type="month" id="dBln" onchange="loadDash()" style="max-width:180px"></div>
+ <div class="grid rings" id="dRings"></div>
+ <p style="color:var(--mut);font-size:12px">Hari kerja dihitung Senin-Jumat (tanpa memperhitungkan hari libur nasional).</p>
 </section>
 
 <!-- INPUT -->
@@ -109,7 +190,17 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
   <input id="pickQ" placeholder="Cari kegiatan..." oninput="renderPick()" style="margin-top:8px"><div id="pickList"></div></div>
  <div class="card"><b>Kegiatan</b><div id="rows" style="margin-top:8px"></div>
   <button class="b g" onclick="addRow()">+ Tambah baris</button></div>
- <div class="card"><b>Dokumentasi Foto</b><div class="ph" id="photos" style="margin-top:8px"></div>
+ <div class="card" id="photoDrop"><b>Dokumentasi Foto</b>
+  <div class="row" style="margin:10px 0 4px"><small style="color:var(--mut)">Ambil bukti dari:</small>
+   <button class="b g" onclick="pickMulti()">🖼️ Galeri / WhatsApp</button>
+   <button class="b g" onclick="pasteClip()">📋 Tempel (WhatsApp Web)</button>
+   <button class="b g" onclick="openDrive()">☁️ Google Drive</button>
+   <input type="file" id="fileMulti" accept="image/*" multiple hidden onchange="addImages([...this.files]);this.value=''"></div>
+  <details style="margin-bottom:8px;color:var(--mut);font-size:13px"><summary style="cursor:pointer">Cara mengambil foto dari WhatsApp &amp; Drive</summary>
+   <p style="margin:6px 0"><b>WhatsApp di HP:</b> tekan <i>Galeri / WhatsApp</i>, lalu pilih foto dari folder <i>WhatsApp Images</i> (boleh pilih beberapa sekaligus). Foto yang belum ada di galeri: buka chat, tahan foto, pilih <i>Simpan</i>.<br>
+   <b>WhatsApp Web / komputer:</b> klik kanan foto di WhatsApp Web, pilih <i>Salin gambar</i>, lalu tekan <i>Tempel</i> atau Ctrl+V di halaman ini. Foto juga bisa diseret ke kotak ini.<br>
+   <b>Google Drive:</b> tekan <i>Google Drive</i>, tempel link file atau folder (satu link per baris). Link harus dibagikan ke "Siapa saja yang memiliki link".</p></details>
+  <div class="ph" id="photos" style="margin-top:8px"></div>
   <div class="row" style="margin-top:8px"><button class="b g" id="btnAddFoto" onclick="addFoto()">+ Tambah Foto</button>
   <button class="b g" id="btnDelFoto" onclick="delFoto()">− Hapus Foto Terakhir</button><small id="fotoInfo" style="color:var(--mut)"></small></div></div>
  <div class="row"><button class="b" id="btnSave" onclick="saveReport()">Simpan</button>
@@ -148,11 +239,11 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
   <h2>Rekap Bulanan</h2>
   <div class="card row">
    <input type="month" id="rBln" style="max-width:180px" onchange="loadMon()">
-   <button class="b g" onclick="printMon(false)">CETAK REKAP</button>
-   <button class="b" onclick="printMon(true)">CETAK LAPORAN 1 BULAN</button>
-   <button class="b g" onclick="printMon(true,true)">SIMPAN PDF</button>
+   <button class="b" onclick="printMon(false)">CETAK REKAP BULANAN</button>
+   <button class="b g" onclick="printMon(false,true)">SIMPAN PDF REKAP</button>
+   <button class="b g" onclick="printMon(true)">CETAK REKAP + SEMUA LAPORAN HARIAN</button>
   </div>
-  <p style="color:var(--mut);margin-top:-6px">Rekap menyesuaikan jumlah hari pada bulan yang dipilih. "Laporan 1 Bulan" = rekap + semua laporan harian dalam satu file.</p>
+  <p style="color:var(--mut);margin-top:-6px">Rekap diambil dari laporan harian: setiap hari (menyesuaikan 28-31 hari) berisi kegiatannya, dan kegiatan ke-1 mengambil Foto 1, kegiatan ke-2 mengambil Foto 2, dan seterusnya. Kertas A4 landscape.</p>
  </div>
  <div id="rreport"></div>
 </section>
@@ -168,17 +259,39 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
  <button class="b" onclick="saveMaster()">Simpan Master</button>
 </section>
 
+<!-- ADMIN -->
+<section class="view" id="v-admin">
+ <h2>Admin</h2>
+ <div class="card" id="adLock" style="max-width:420px"><b>🔒 Menu admin terkunci</b>
+  <label>Kode Key Admin</label><input type="password" id="adKey" onkeydown="if(event.key==='Enter')adOpen()"><br>
+  <button class="b" onclick="adOpen()">Buka</button></div>
+ <div id="adBody" style="display:none">
+  <div class="grid" id="adStat"></div>
+  <div class="card"><b>Tambah pengguna baru</b>
+   <div class="row" style="margin-top:8px"><input id="nuUser" placeholder="Username" autocapitalize="none" style="max-width:190px"><input id="nuPass" placeholder="Password (min. 6)" style="max-width:190px">
+    <label style="margin:0"><input type="checkbox" id="nuLegacy" style="width:auto"> Ambil data lama</label><button class="b" onclick="adBuat()">Buat akun</button></div>
+   <small style="color:var(--mut)">Berikan Username dan Password ini ke pengguna. Pengguna mengisi Nama sendiri di Pengaturan (sekali, lalu terkunci).</small></div>
+  <div class="card tw"><table class="t"><thead><tr><th>Username</th><th>Nama</th><th>Status</th><th>Laporan</th><th>Laporan terakhir</th><th>Login terakhir</th><th>Aksi</th></tr></thead><tbody id="adRows"></tbody></table></div>
+  <button class="b g" onclick="adLock()">Kunci kembali</button>
+ </div>
+</section>
+
 <!-- PENGATURAN -->
 <section class="view" id="v-pengaturan">
  <h2>Pengaturan</h2>
  <div class="card" style="max-width:560px">
-  <label>Nama</label><input id="pNama">
+  <label>Nama</label><input id="pNama"><small id="pNamaNote" style="display:none;color:var(--mut)">🔒 Nama terkunci. Hanya admin yang dapat mengubahnya.</small>
   <label>NIP</label><input id="pNip">
   <label>Jabatan</label><input id="pJab">
   <label>Unit Kerja</label><input id="pUnit">
   <label>Nama Atasan Langsung</label><input id="pAts">
   <label>NIP Atasan Langsung</label><input id="pNipAts">
   <label>Nama Sekolah</label><input id="pSek">
+  <label>Tanda Tangan Atasan Langsung (foto)</label>
+  <img id="ttdAImg" class="ttdp"><div class="row"><input type="file" accept="image/*" onchange="pickTtd('a',this)" style="flex:1"><button class="b sm rd" onclick="clearTtd('a')">Hapus</button></div>
+  <label>Tanda Tangan Pegawai (foto)</label>
+  <img id="ttdPImg" class="ttdp"><div class="row"><input type="file" accept="image/*" onchange="pickTtd('p',this)" style="flex:1"><button class="b sm rd" onclick="clearTtd('p')">Hapus</button></div>
+  <small style="color:var(--mut)">Gunakan foto tanda tangan di kertas putih. Otomatis tampil di bagian tanda tangan laporan.</small>
   <br><button class="b" onclick="savePeg()">Simpan Pengaturan</button>
  </div>
 </section>
@@ -188,14 +301,115 @@ table.t th,table.t td{border-bottom:1px solid var(--line);padding:8px;text-align
 // ===== KONFIGURASI =====
 // Kosong  = aplikasi dibuka lewat URL Web App Apps Script (otomatis memakai google.script.run)
 // Diisi   = aplikasi di GitHub Pages: tempel URL Web App berakhiran /exec
-const API_URL = "https://script.google.com/macros/s/AKfycbwRT_WurmLLoYl5rPijklrvOl_Gt-yhKPAd6IE6Mc5hsfNHrQv5JMD8ISLZ_onMkvbN/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzYnoGGbFivH_rasY5yqqO4cS5LVUeAOcqk8hNj4EYCHdHUHBZqyEnLVvhFiTNy4D8L/exec";
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let PEG = {}, LIST = [], FOTO = [{},{},{},{}], EDIT = null, CUR = null;
 
+// ===== VERSI, LOGIN, SESI =====
+const APP_VERSION = '1.3';   // 1.0 -> 1.1 ... 1.9 -> 2.0
+let TOKEN = '', USER = '', ADMINKEY = '', ADLIST = [];
+const store = {
+  get: k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} },
+  del: k => { try { localStorage.removeItem(k); } catch (e) {} }
+};
+const lgMsg = m => $('lgMsg').textContent = m || '';
+function lgSetup(on) { $('lgForm').style.display = on ? 'none' : 'block'; $('lgSetup').style.display = on ? 'block' : 'none'; lgMsg(''); }
+async function showLogin(msg) {
+  document.body.classList.add('locked'); lgSetup(false); lgMsg(msg);
+  try { const r = await call('cekAwal'); $('lgFirst').style.display = r.adaUser ? 'none' : 'block'; } catch (e) { lgMsg('Gagal terhubung: ' + e.message); }
+}
+function forceLogout(msg) {
+  TOKEN = ''; USER = ''; ADMINKEY = ''; PEG = {}; LIST = []; store.del('skp_token'); store.del('skp_user'); showLogin(msg);
+}
+function logout() { if (confirm('Keluar dari aplikasi?')) forceLogout(''); }
+async function afterLogin(r) {
+  TOKEN = r.token; USER = r.username; store.set('skp_token', TOKEN); store.set('skp_user', USER);
+  $('lgPass').value = ''; $('bsPass').value = ''; $('bsKey').value = ''; await startApp();
+}
+async function doLogin() {
+  const u = $('lgUser').value.trim(), p = $('lgPass').value;
+  if (!u || !p) return lgMsg('Username dan password wajib diisi');
+  try { await afterLogin(await call('login', { username: u, password: p })); } catch (e) { lgMsg(e.message); }
+}
+async function doBootstrap() {
+  try { await afterLogin(await call('bootstrap', { username: $('bsUser').value, password: $('bsPass').value, adminKey: $('bsKey').value })); }
+  catch (e) { lgMsg(e.message); }
+}
+async function startApp() {
+  document.body.classList.remove('locked'); $('uLbl').textContent = '👤 ' + USER;
+  show('dashboard');
+  try { PEG = await call('getPegawai'); } catch (e) { return; }
+  await loadMaster(); refresh();
+  if (!PEG.nama) { show('pengaturan'); toast('Lengkapi Pengaturan. Nama hanya bisa diisi satu kali.'); }
+}
+
+// ===== ADMIN =====
+async function adOpen() {
+  const k = $('adKey').value; if (!k) return toast('Masukkan kode key admin', 1);
+  try { await call('adminCek', { adminKey: k }); ADMINKEY = k; $('adKey').value = ''; adShow(); } catch (e) { toast(e.message, 1); }
+}
+function adLock() { ADMINKEY = ''; $('adLock').style.display = 'block'; $('adBody').style.display = 'none'; }
+async function adShow() {
+  $('adLock').style.display = 'none'; $('adBody').style.display = 'block';
+  try { ADLIST = await call('adminList', { adminKey: ADMINKEY }); } catch (e) { toast(e.message, 1); return adLock(); }
+  const fmt = x => x ? new Date(x).toLocaleString('id-ID') : '-';
+  $('adStat').innerHTML = `<div class="card stat"><b>${ADLIST.length}</b><span>Pengguna</span></div>
+   <div class="card stat"><b>${ADLIST.filter(x => x.status === 'Aktif').length}</b><span>Aktif</span></div>
+   <div class="card stat"><b>${ADLIST.reduce((a, x) => a + x.laporan, 0)}</b><span>Total laporan</span></div>`;
+  $('adRows').innerHTML = ADLIST.map(x => `<tr><td>${esc(x.username)}</td><td>${esc(x.nama) || '<i style="color:var(--mut)">belum diisi</i>'}</td>
+   <td><span class="badge ${x.status === 'Aktif' ? '' : 'w'}">${esc(x.status)}</span></td><td>${x.laporan}</td>
+   <td>${x.terakhir ? fmtLong(x.terakhir) : '-'}</td><td>${fmt(x.login)}</td>
+   <td class="row"><button class="b s g" onclick="adAksi('reset','${esc(x.username)}')">Reset PW</button>
+   <button class="b s g" onclick="adAksi('nama','${esc(x.username)}')">Nama</button>
+   <button class="b s g" onclick="adAksi('status','${esc(x.username)}')">${x.status === 'Aktif' ? 'Nonaktifkan' : 'Aktifkan'}</button>
+   <button class="b sm rd" onclick="adAksi('hapus','${esc(x.username)}')">Hapus</button></td></tr>`).join('')
+   || '<tr><td colspan="7" style="color:var(--mut)">Belum ada pengguna.</td></tr>';
+}
+async function adCall(action, payload, okMsg) {
+  try { await call(action, Object.assign({ adminKey: ADMINKEY }, payload)); toast(okMsg); adShow(); } catch (e) { toast(e.message, 1); }
+}
+async function adBuat() {
+  const u = $('nuUser').value.trim(), p = $('nuPass').value;
+  if (!u || !p) return toast('Username dan password wajib diisi', 1);
+  await adCall('adminBuat', { username: u, password: p, claimLegacy: $('nuLegacy').checked }, 'Akun berhasil dibuat');
+  $('nuUser').value = $('nuPass').value = ''; $('nuLegacy').checked = false;
+}
+async function adAksi(a, u) {
+  const x = ADLIST.find(i => i.username === u) || {};
+  if (a === 'reset') { const p = prompt('Password baru untuk ' + u + ' (min. 6 karakter):'); if (p) adCall('adminReset', { username: u, password: p }, 'Password diubah'); }
+  if (a === 'nama') { const n = prompt('Nama untuk ' + u + '.\nKosongkan untuk membuka kunci agar pengguna mengisi sendiri:', x.nama || ''); if (n !== null) adCall('adminNama', { username: u, nama: n }, 'Nama diperbarui'); }
+  if (a === 'status') adCall('adminStatus', { username: u, status: x.status === 'Aktif' ? 'Nonaktif' : 'Aktif' }, 'Status diubah');
+  if (a === 'hapus' && confirm('Hapus akun ' + u + '? Data laporannya tetap tersimpan di Google Sheets.')) adCall('adminHapus', { username: u }, 'Akun dihapus');
+}
+
+// ===== PROGRES SIMPAN (0% - 100%) =====
+// Setiap tahap nyata (unggah tiap foto, lalu simpan data) menaikkan persentase; di dalam tahap persen merayap pelan.
+const Prog = {
+  v: 0, cap: 0, done: 0, steps: 1, timer: null,
+  start(title, steps) {
+    this.steps = Math.max(1, steps); this.done = 0; this.v = 0;
+    $('pgTitle').textContent = title; $('pgBox').style.display = 'flex'; this.next('Memulai...');
+    clearInterval(this.timer); this.timer = setInterval(() => { this.v += (this.cap - this.v) * 0.07; this.draw(); }, 100); this.draw();
+  },
+  next(label) { this.cap = (this.done + 1) / this.steps * 100 - 3; $('pgLbl').textContent = label; },
+  ok() { this.done++; this.v = Math.max(this.v, this.done / this.steps * 100 - 0.5); this.draw(); },
+  draw() {
+    const p = Math.min(100, Math.floor(this.v));
+    $('pgPct').textContent = p + '%'; $('pgBar').style.width = p + '%';
+    $('pgRing').style.strokeDashoffset = 326.73 * (1 - p / 100);
+  },
+  async end(label) {
+    clearInterval(this.timer); this.v = 100; this.draw(); $('pgLbl').textContent = label || 'Selesai';
+    await new Promise(r => setTimeout(r, 600)); $('pgBox').style.display = 'none';
+  },
+  fail() { clearInterval(this.timer); $('pgBox').style.display = 'none'; }
+};
+
 function api(action, payload) {
-  const body = JSON.stringify(Object.assign({ action }, payload || {}));
+  const body = JSON.stringify(Object.assign({ action, token: TOKEN }, payload || {}));
   if (!API_URL && window.google && google.script && google.script.run)
     return new Promise((res, rej) => google.script.run.withSuccessHandler(s => res(JSON.parse(s))).withFailureHandler(rej).apiCall(body));
   if (!API_URL) return Promise.reject(new Error('API_URL belum diisi'));
@@ -203,7 +417,7 @@ function api(action, payload) {
 }
 async function call(action, payload) {
   $('loading').style.display = 'block';
-  try { const r = await api(action, payload); if (!r.ok) throw new Error(r.message); return r.data; }
+  try { const r = await api(action, payload); if (!r.ok) { if (r.auth) forceLogout(r.message); throw new Error(r.message); } return r.data; }
   finally { $('loading').style.display = 'none'; }
 }
 function toast(msg, err) {
@@ -225,11 +439,12 @@ function show(v) {
   if (v === 'dashboard' || v === 'riwayat' || v === 'cetak') refresh().then(() => { if (v === 'cetak') fillSel(); });
   if (v === 'pengaturan') fillPeg();
   if (v === 'master') fillMaster();
+  if (v === 'admin') adLock(); else ADMINKEY = '';
   if (v === 'rekap') { if (!$('rBln').value) $('rBln').value = today().slice(0, 7); loadMon(); }
   if (v === 'input' && !EDIT && !$('iTgl').value) newInput(today());
 }
 function toggleMenu() { $('side').classList.toggle('open'); }
-document.querySelectorAll('.sidebar a').forEach(a => a.onclick = () => { if (a.dataset.v === 'input') newInput(today()); else show(a.dataset.v); });
+document.querySelectorAll('.sidebar a[data-v]').forEach(a => a.onclick = () => { if (a.dataset.v === 'input') newInput(today()); else show(a.dataset.v); });
 
 // ===== DATA =====
 async function refresh() {
@@ -241,6 +456,27 @@ async function refresh() {
   const h = LIST.find(x => x.tanggal === today());
   $('dHari').textContent = h ? 'Sudah (' + h.jumlah + ')' : 'Belum';
   renderList();
+  if ($('v-dashboard').classList.contains('on')) loadDash();
+}
+function ring(p, title, sub, color) {
+  const r = 52, c = 2 * Math.PI * r, v = Math.max(0, Math.min(100, p || 0));
+  return `<div class="card ringc"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="${r}" class="rg-bg"/><circle cx="60" cy="60" r="${r}" class="rg-fg" transform="rotate(-90 60 60)" style="stroke:${color};stroke-dasharray:${c};stroke-dashoffset:${c}" data-off="${c * (1 - v / 100)}"/><text x="60" y="68" class="rg-t">${Math.round(v)}%</text></svg><b>${title}</b><span>${sub}</span></div>`;
+}
+async function loadDash() {
+  if (!$('dBln').value) $('dBln').value = today().slice(0, 7);
+  const b = $('dBln').value; let reps = [];
+  try { reps = await call('getBulan', { bulan: b }); } catch (e) { return; }
+  const [y, m] = b.split('-').map(Number), n = new Date(y, m, 0).getDate();
+  let kerja = 0; for (let d = 1; d <= n; d++) { const g = new Date(y, m - 1, d).getDay(); if (g > 0 && g < 6) kerja++; }
+  const items = reps.flatMap(r => r.items), T = items.reduce((a, x) => a + (+x.target || 0), 0), R = items.reduce((a, x) => a + (+x.realisasi || 0), 0);
+  const cap = items.length ? items.reduce((a, x) => a + (+x.capaian || 0), 0) / items.length : 0;
+  const withFoto = reps.filter(r => r.fotos.some(f => f.url)).length;
+  $('dRings').innerHTML =
+    ring(kerja ? reps.length / kerja * 100 : 0, 'Progres Laporan', reps.length + ' dari ' + kerja + ' hari kerja', '#4f46e5') +
+    ring(cap, 'Rata-rata Capaian', items.length + ' kegiatan', '#16a34a') +
+    ring(T ? R / T * 100 : 0, 'Realisasi / Target', R + ' dari ' + T + ' target', '#0ea5e9') +
+    ring(reps.length ? withFoto / reps.length * 100 : 0, 'Kelengkapan Foto', withFoto + ' dari ' + reps.length + ' laporan', '#f59e0b');
+  requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.rg-fg').forEach(e => e.style.strokeDashoffset = e.dataset.off)));
 }
 function renderList() {
   const d = $('fTgl').value, b = $('fBln').value, q = $('fTxt').value.toLowerCase();
@@ -256,12 +492,39 @@ function renderList() {
 
 // ===== PENGATURAN =====
 const PF = { nama: 'pNama', nip: 'pNip', jabatan: 'pJab', unit: 'pUnit', atasan: 'pAts', nipAtasan: 'pNipAts', sekolah: 'pSek' };
-function fillPeg() { for (const k in PF) $(PF[k]).value = PEG[k] || ''; }
+let TTD = { a: {}, p: {} };
+function showTtd() {
+  [['a', 'ttdAImg'], ['p', 'ttdPImg']].forEach(([k, id]) => { const s = TTD[k].data || TTD[k].url || ''; $(id).src = s; $(id).style.display = s ? 'block' : 'none'; });
+}
+async function pickTtd(k, el) {
+  if (!el.files[0]) return;
+  try { TTD[k] = { data: await compress(el.files[0], 600, .85) }; showTtd(); } catch (e) { toast('Foto tidak dapat dibaca', 1); }
+}
+function clearTtd(k) { TTD[k] = {}; showTtd(); }
+function fillPeg() {
+  for (const k in PF) $(PF[k]).value = PEG[k] || '';
+  $('pNama').disabled = !!PEG.nama; $('pNamaNote').style.display = PEG.nama ? 'block' : 'none';
+  TTD = { a: { url: PEG.ttdAtasan || '' }, p: { url: PEG.ttdPegawai || '' } }; showTtd();
+}
 async function savePeg() {
   const p = {}; for (const k in PF) p[k] = $(PF[k]).value.trim();
   if (!p.nama) return toast('Nama tidak boleh kosong', 1);
-  try { await call('savePegawai', { pegawai: p }); PEG = p; toast('Simpan berhasil'); }
-  catch (e) { toast('Gagal menyimpan data: ' + e.message, 1); }
+  if (!PEG.nama && !confirm('Nama "' + p.nama + '" hanya bisa diisi satu kali dan akan terkunci. Hanya admin yang bisa mengubahnya. Lanjutkan?')) return;
+  p.ttdAtasan = TTD.a.url || ''; p.ttdPegawai = TTD.p.url || '';
+  const up = [['a', 'ttdAtasan', 'ttd_atasan', 'tanda tangan atasan'], ['p', 'ttdPegawai', 'ttd_pegawai', 'tanda tangan pegawai']].filter(x => TTD[x[0]].data);
+  Prog.start('Menyimpan pengaturan', up.length + 1);
+  try {
+    for (const x of up) {
+      Prog.next('Mengunggah ' + x[3] + '...');
+      p[x[1]] = (await call('uploadFoto', { data: TTD[x[0]].data, nama: x[2], size: 600 })).url; Prog.ok();
+    }
+    Prog.next('Menyimpan data pengaturan...');
+    const res = await call('savePegawai', { pegawai: p });
+    Prog.ok(); await Prog.end('Simpan berhasil');
+    for (const k in PF) PEG[k] = p[k]; PEG.nama = res.nama;
+    PEG.ttdAtasan = res.ttdAtasan; PEG.ttdPegawai = res.ttdPegawai; fillPeg(); toast('Simpan berhasil');
+  }
+  catch (e) { Prog.fail(); toast('Gagal menyimpan data: ' + e.message, 1); }
 }
 
 // ===== MASTER KEGIATAN =====
@@ -288,8 +551,9 @@ async function saveMaster() {
     keg.push({ uraian: u, target: Number(t), satuan: tr.querySelector('.ms').value.trim() });
   }
   const ket = $('mKet').value.split('\n').map(s => s.trim()).filter(Boolean);
-  try { await call('saveMaster', { master: { kegiatan: keg, keterangan: ket } }); MASTER = { kegiatan: keg, keterangan: ket }; fillMaster(); toast('Simpan berhasil'); }
-  catch (e) { toast('Gagal menyimpan data: ' + e.message, 1); }
+  Prog.start('Menyimpan master kegiatan', 1); Prog.next('Menyimpan data...');
+  try { await call('saveMaster', { master: { kegiatan: keg, keterangan: ket } }); Prog.ok(); await Prog.end('Simpan berhasil'); MASTER = { kegiatan: keg, keterangan: ket }; fillMaster(); toast('Simpan berhasil'); }
+  catch (e) { Prog.fail(); toast('Gagal menyimpan data: ' + e.message, 1); }
 }
 function capOpts(v) {
   const L = [0, 25, 50, 75, 100], has = v !== undefined && v !== null && v !== '' && !isNaN(Number(v));
@@ -300,10 +564,10 @@ function capOpts(v) {
 function matchMaster(el) {
   const k = MASTER.kegiatan.find(x => x.uraian.trim().toLowerCase() === el.value.trim().toLowerCase());
   if (!k) return;
-  const d = el.closest('.kg'), s = d.querySelector('.s'), t = d.querySelector('.t'), r = d.querySelector('.r');
+  const d = el.closest('.kg'), s = d.querySelector('[data-f=s]'), t = d.querySelector('[data-f=t]'), r = d.querySelector('[data-f=r]');
   if (!s.value) s.value = k.satuan;
   if (!t.value) { t.value = k.target; if (!r.value) r.value = k.target; t.dispatchEvent(new Event('input')); }
-  const ke = d.querySelector('.k'); if (!ke.value) ke.value = MASTER.keterangan[0] || '';
+  const ke = d.querySelector('[data-f=k]'); if (!ke.value) ke.value = MASTER.keterangan[0] || '';
 }
 function fillSatuan() {
   $('dlSatuan').innerHTML = [...new Set(MASTER.kegiatan.map(k => k.satuan).filter(Boolean))].map(s => `<option value="${esc(s)}">`).join('');
@@ -317,13 +581,13 @@ function renderPick() {
 }
 function pickKeg(i) {
   const k = MASTER.kegiatan[i], rows = [...$('rows').children];
-  if (rows.some(d => d.querySelector('.u').value.trim() === k.uraian)) return toast('Kegiatan ini sudah dipilih', 1);
-  let d = rows.find(d => !d.querySelector('.u').value.trim());
+  if (rows.some(d => d.querySelector('[data-f=u]').value.trim() === k.uraian)) return toast('Kegiatan ini sudah dipilih', 1);
+  let d = rows.find(d => !d.querySelector('[data-f=u]').value.trim());
   if (!d) { addRow(); d = $('rows').lastChild; }
   const s = (c, v) => d.querySelector(c).value = v;
-  s('.u', k.uraian); s('.t', k.target); s('.r', k.target); s('.s', k.satuan);
-  if (!d.querySelector('.k').value) s('.k', MASTER.keterangan[0] || '');
-  d.querySelector('.t').dispatchEvent(new Event('input'));
+  s('[data-f=u]', k.uraian); s('[data-f=t]', k.target); s('[data-f=r]', k.target); s('[data-f=s]', k.satuan);
+  if (!d.querySelector('[data-f=k]').value) s('[data-f=k]', MASTER.keterangan[0] || '');
+  d.querySelector('[data-f=t]').dispatchEvent(new Event('input'));
   toast('Ditambahkan ke laporan');
 }
 
@@ -331,17 +595,17 @@ function pickKeg(i) {
 function addRow(it) {
   it = it || {};
   const n = $('rows').children.length + 1, d = document.createElement('div'); d.className = 'kg';
-  d.innerHTML = `<div class="row" style="justify-content:space-between"><label class="rn">${n}. Uraian Pekerjaan / Kegiatan</label><button class="b s r" onclick="delRow(this)">Hapus</button></div><textarea class="u" onchange="matchMaster(this)">${esc(it.uraian)}</textarea>
-  <div class="f"><div><label>Target</label><input class="t" inputmode="decimal" value="${it.target ?? ''}"></div>
-  <div><label>Realisasi</label><input class="r" inputmode="decimal" value="${it.realisasi ?? ''}"></div>
-  <div><label>Satuan</label><input class="s" list="dlSatuan" value="${esc(it.satuan)}"></div>
-  <div><label>Capaian</label><select class="c">${capOpts(it.capaian)}</select></div></div>
-  <div class="f2"><div><label>Keterangan (pilih)</label><select onchange="if(this.value)this.closest('.kg').querySelector('.k').value=this.value"><option value="">-- pilih --</option>${MASTER.keterangan.map(k => `<option>${esc(k)}</option>`).join('')}</select></div>
-  <div><label>Keterangan (boleh diketik)</label><input class="k" value="${esc(it.keterangan)}"></div></div>`;
+  d.innerHTML = `<div class="row" style="justify-content:space-between"><label class="rn">${n}. Uraian Pekerjaan / Kegiatan</label><button class="b sm rd" onclick="delRow(this)">Hapus</button></div><textarea class="u" data-f="u" onchange="matchMaster(this)">${esc(it.uraian)}</textarea>
+  <div class="f"><div><label>Target</label><input class="t" data-f="t" inputmode="decimal" value="${it.target ?? ''}"></div>
+  <div><label>Realisasi</label><input class="r" data-f="r" inputmode="decimal" value="${it.realisasi ?? ''}"></div>
+  <div><label>Satuan</label><input class="s" data-f="s" list="dlSatuan" value="${esc(it.satuan)}"></div>
+  <div><label>Capaian</label><select class="c" data-f="c">${capOpts(it.capaian)}</select></div></div>
+  <div class="f2"><div><label>Keterangan (pilih)</label><select onchange="if(this.value)this.closest('.kg').querySelector('[data-f=k]').value=this.value"><option value="">-- pilih --</option>${MASTER.keterangan.map(k => `<option>${esc(k)}</option>`).join('')}</select></div>
+  <div><label>Keterangan (boleh diketik)</label><input class="k" data-f="k" value="${esc(it.keterangan)}"></div></div>`;
   // Capaian disarankan otomatis (dibulatkan ke 0/25/50/75/100%), tetap bisa diganti lewat pilihan
-  const calc = () => { const t = parseFloat(d.querySelector('.t').value), r = parseFloat(d.querySelector('.r').value);
-    if (t > 0 && !isNaN(r)) d.querySelector('.c').value = Math.min(100, Math.max(0, Math.round(r / t * 4) * 25)); };
-  d.querySelectorAll('.t,.r').forEach(i => i.oninput = calc);
+  const calc = () => { const t = parseFloat(d.querySelector('[data-f=t]').value), r = parseFloat(d.querySelector('[data-f=r]').value);
+    if (t > 0 && !isNaN(r)) d.querySelector('[data-f=c]').value = Math.min(100, Math.max(0, Math.round(r / t * 4) * 25)); };
+  d.querySelectorAll('[data-f=t],[data-f=r]').forEach(i => i.oninput = calc);
   $('rows').appendChild(d);
 }
 function delRow(btn) {
@@ -359,6 +623,63 @@ function buildPhotos() {
   $('btnDelFoto').style.display = FOTO.length > 4 ? '' : 'none';
   $('fotoInfo').textContent = FOTO.length + ' dari maks. 10 foto';
 }
+// ===== AMBIL BUKTI: galeri/WhatsApp, tempel, Google Drive =====
+function emptySlot() {
+  let i = FOTO.findIndex(f => !f.data && !f.url);
+  if (i < 0 && FOTO.length < 10) { FOTO.push({}); i = FOTO.length - 1; }
+  return i;
+}
+function pickMulti() { $('fileMulti').click(); }
+async function addImages(files) {
+  files = (files || []).filter(f => f && /^image\//.test(f.type));
+  if (!files.length) return toast('Tidak ada file gambar', 1);
+  let n = 0;
+  for (const f of files) {
+    const i = emptySlot(); if (i < 0) { toast('Maksimal 10 foto. ' + n + ' foto ditambahkan', 1); buildPhotos(); return; }
+    try { FOTO[i].data = await compress(f); n++; } catch (e) { toast('Ada foto yang tidak dapat dibaca', 1); }
+  }
+  buildPhotos(); toast(n + ' foto ditambahkan');
+}
+async function pasteClip() {
+  try {
+    const files = [];
+    for (const it of await navigator.clipboard.read()) {
+      const t = it.types.find(x => x.startsWith('image/'));
+      if (t) files.push(new File([await it.getType(t)], 'tempel.' + t.split('/')[1], { type: t }));
+    }
+    if (!files.length) return toast('Belum ada gambar yang disalin', 1);
+    addImages(files);
+  } catch (e) { toast('Tekan Ctrl+V di halaman ini untuk menempel gambar', 1); }
+}
+document.addEventListener('paste', e => {
+  if (!$('v-input').classList.contains('on')) return;
+  const fs = [...(e.clipboardData ? e.clipboardData.files : [])].filter(f => /^image\//.test(f.type));
+  if (fs.length) { e.preventDefault(); addImages(fs); }
+});
+['dragover', 'dragleave', 'drop'].forEach(ev => document.addEventListener(ev, e => {
+  const z = $('photoDrop'); if (!z || !z.contains(e.target) || !$('v-input').classList.contains('on')) return;
+  e.preventDefault(); z.classList.toggle('over', ev === 'dragover');
+  if (ev === 'drop') addImages([...e.dataTransfer.files]);
+}));
+function openDrive() { $('drvLinks').value = ''; $('drvBox').style.display = 'flex'; }
+async function driveImport() {
+  const links = $('drvLinks').value.split(/\s+/).map(s => s.trim()).filter(Boolean);
+  if (!links.length) return toast('Tempel link Google Drive dulu', 1);
+  $('drvBox').style.display = 'none';
+  Prog.start('Mengambil dari Google Drive', links.length);
+  let n = 0;
+  try {
+    for (let k = 0; k < links.length; k++) {
+      Prog.next('Mengambil link ' + (k + 1) + ' dari ' + links.length + '...');
+      const free = FOTO.filter(f => !f.data && !f.url).length + (10 - FOTO.length);
+      if (free <= 0) { toast('Maksimal 10 foto', 1); break; }
+      const res = await call('importDrive', { link: links[k], max: free });
+      res.forEach(r => { const i = emptySlot(); if (i >= 0) { FOTO[i].url = r.url; n++; } });
+      Prog.ok();
+    }
+    await Prog.end('Selesai'); buildPhotos(); toast(n + ' foto diambil dari Drive');
+  } catch (e) { Prog.fail(); buildPhotos(); toast(e.message, 1); }
+}
 function addFoto() { if (FOTO.length >= 10) return toast('Maksimal 10 foto', 1); FOTO.push({}); buildPhotos(); }
 function delFoto() {
   if (FOTO.length <= 4) return;
@@ -374,7 +695,7 @@ function compress(file, max = 1000, q = .7) {
   return new Promise((res, rej) => { const fr = new FileReader();
     fr.onload = () => { const im = new Image(); im.onload = () => { const s = Math.min(1, max / Math.max(im.width, im.height));
       const c = document.createElement('canvas'); c.width = im.width * s; c.height = im.height * s;
-      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', q)); };
+      const cx = c.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, c.width, c.height); cx.drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', q)); };
       im.onerror = rej; im.src = fr.result; };
     fr.onerror = rej; fr.readAsDataURL(file); });
 }
@@ -399,31 +720,52 @@ async function editReport(t) {
     FOTO = r.fotos.map(f => ({ url: f.url, ket: f.ket })); trimFoto(); buildPhotos();
   } catch (e) { toast('Gagal memuat data: ' + e.message, 1); }
 }
+function failRow(d, i, msg, k) {
+  toast('Baris ' + i + ': ' + msg, 1);
+  const el = d.querySelector('[data-f=' + k + ']'); el.scrollIntoView({ block: 'center' }); el.focus();
+}
 async function saveReport() {
   const tgl = $('iTgl').value;
   if (!PEG.nama) return toast('Nama tidak boleh kosong. Isi Pengaturan dulu.', 1);
   if (!tgl) return toast('Tanggal tidak boleh kosong', 1);
   const items = [];
+  let idx = 0;
   for (const d of $('rows').children) {
+    idx++;
     const g = c => d.querySelector(c).value.trim();
-    const it = { uraian: g('.u'), target: g('.t'), realisasi: g('.r'), satuan: g('.s'), keterangan: g('.k'), capaian: g('.c') };
-    if (!it.uraian && !it.target && !it.realisasi && !it.satuan && !it.keterangan) continue; // baris kosong dilewati
-    if (!it.uraian) return toast('Uraian kegiatan tidak boleh kosong', 1);
-    if (it.target === '' || isNaN(Number(it.target))) return toast('Target harus berupa angka', 1);
-    if (it.realisasi === '' || isNaN(Number(it.realisasi))) return toast('Realisasi harus berupa angka', 1);
+    const it = { uraian: g('[data-f=u]'), target: g('[data-f=t]'), realisasi: g('[data-f=r]'), satuan: g('[data-f=s]'), keterangan: g('[data-f=k]'), capaian: g('[data-f=c]') };
+    if (!it.uraian && !it.target && !it.realisasi && !it.satuan) continue; // baris kosong dilewati
+    if (!it.uraian) return failRow(d, idx, 'Uraian kegiatan tidak boleh kosong', 'u');
+    const tn = it.target.replace(',', '.'), rn = it.realisasi.replace(',', '.');
+    if (tn === '' || isNaN(Number(tn))) return failRow(d, idx, 'Target harus berupa angka', 't');
+    if (rn === '' || isNaN(Number(rn))) return failRow(d, idx, 'Realisasi harus berupa angka (isi angka, mis. 1)', 'r');
+    it.target = Number(tn); it.realisasi = Number(rn);
     items.push(it);
   }
   if (!items.length) return toast('Uraian kegiatan tidak boleh kosong', 1);
   if (!EDIT && LIST.some(x => x.tanggal === tgl) && !confirm('Laporan tanggal ini sudah ada. Timpa?')) return;
   $('btnSave').disabled = true; $('btnSave').textContent = 'Menyimpan...';
-  try { await call('save', { tanggal: tgl, items, fotos: FOTO }); toast('Simpan berhasil'); EDIT = null; show('riwayat'); }
-  catch (e) { toast('Gagal menyimpan data: ' + e.message, 1); }
+  const baru = FOTO.map((f, i) => f.data ? i : -1).filter(i => i >= 0);
+  Prog.start('Menyimpan laporan', baru.length + 1);
+  try {
+    for (let n = 0; n < baru.length; n++) {
+      const i = baru[n];
+      Prog.next('Mengunggah foto ' + (i + 1) + ' (' + (n + 1) + ' dari ' + baru.length + ')');
+      FOTO[i].url = (await call('uploadFoto', { data: FOTO[i].data, nama: tgl + '_foto' + (i + 1), size: 1000 })).url;
+      delete FOTO[i].data; Prog.ok();
+    }
+    Prog.next('Menyimpan data laporan...');
+    await call('save', { tanggal: tgl, items, fotos: FOTO.map(f => ({ url: f.url || '', ket: f.ket || '' })) });
+    Prog.ok(); await Prog.end('Simpan berhasil');
+    toast('Simpan berhasil'); EDIT = null; show('riwayat');
+  } catch (e) { Prog.fail(); toast('Gagal menyimpan data: ' + e.message, 1); }
   $('btnSave').disabled = false; $('btnSave').textContent = 'Simpan';
 }
 async function delReport(t) {
   if (!confirm('Hapus laporan ' + fmtLong(t) + '?')) return;
-  try { await call('delete', { tanggal: t }); toast('Data berhasil dihapus'); refresh(); }
-  catch (e) { toast('Gagal menghapus data: ' + e.message, 1); }
+  Prog.start('Menghapus laporan', 1); Prog.next('Menghapus data dan foto...');
+  try { await call('delete', { tanggal: t }); Prog.ok(); await Prog.end('Terhapus'); toast('Data berhasil dihapus'); refresh(); }
+  catch (e) { Prog.fail(); toast('Gagal menghapus data: ' + e.message, 1); }
 }
 
 // ===== LAPORAN / CETAK =====
@@ -458,8 +800,8 @@ function reportHTML(r) {
   ${sigHTML()}`;
 }
 function sigHTML() {
-  return `<div class="ttd"><div>Mengetahui,<br>Atasan Langsung<div class="sp"></div><b><u>${esc(PEG.atasan)}</u></b><br>NIP. ${esc(PEG.nipAtasan)}</div>
-   <div><br>Pegawai yang bersangkutan<div class="sp"></div><b><u>${esc(PEG.nama)}</u></b><br>NIP. ${esc(PEG.nip)}</div></div>`;
+  return `<div class="ttd"><div>Mengetahui,<br>Atasan Langsung<div class="sp">${PEG.ttdAtasan ? `<img src="${esc(PEG.ttdAtasan)}">` : ''}</div><b><u>${esc(PEG.atasan)}</u></b><br>NIP. ${esc(PEG.nipAtasan)}</div>
+   <div><br>Pegawai yang bersangkutan<div class="sp">${PEG.ttdPegawai ? `<img src="${esc(PEG.ttdPegawai)}">` : ''}</div><b><u>${esc(PEG.nama)}</u></b><br>NIP. ${esc(PEG.nip)}</div></div>`;
 }
 
 // ===== REKAP BULANAN =====
@@ -469,23 +811,24 @@ let MON = null, MODE = 'rekap';
 function rekapHTML(bln, reps) {
   const [y, m] = bln.split('-').map(Number), n = new Date(y, m, 0).getDate(), map = {};
   reps.forEach(r => map[r.tanggal] = r);
-  let rows = '', tl = 0, tk = 0, tf = 0;
+  let rows = '', no = 0;
   for (let d = 1; d <= n; d++) {
-    const t = bln + '-' + pad(d), r = map[t], h = HR[new Date(t + 'T12:00:00').getDay()], we = h === 'Sabtu' || h === 'Minggu';
-    const lbl = `<td class="c">${d}</td><td>${h}, ${d} ${BLN[m - 1]} ${y}</td>`;
-    if (r) {
-      const cap = Math.round(r.items.reduce((a, x) => a + x.capaian, 0) / r.items.length), ft = r.fotos.filter(x => x.url).length;
-      const ket = [...new Set(r.items.map(x => x.keterangan).filter(Boolean))].join(', ');
-      tl++; tk += r.items.length; tf += ft;
-      rows += `<tr class="${we ? 'we' : ''}">${lbl}<td class="c">${r.items.length}</td><td class="c">${cap}%</td><td class="c">${ft}</td><td>${esc(ket)}</td></tr>`;
-    } else rows += `<tr class="${we ? 'we' : ''}">${lbl}<td class="c">-</td><td class="c">-</td><td class="c">-</td><td></td></tr>`;
+    const t = bln + '-' + pad(d), r = map[t], h = HR[new Date(t + 'T12:00:00').getDay()];
+    rows += `<tr class="dh"><td colspan="8">HARI KE ${d} <small>- ${h}, ${d} ${BLN[m - 1]} ${y}${r ? '' : ' (tidak ada laporan)'}</small></td></tr>`;
+    if (!r) continue;
+    r.items.forEach((x, i) => {
+      const u = r.fotos[i] && r.fotos[i].url; // kegiatan ke-i memakai foto ke-i
+      const f = u ? `<img src="${esc(u.replace('sz=w1000', 'sz=w500'))}">` : '';
+      rows += `<tr><td class="c">${++no}</td><td>${esc(x.uraian)}</td><td class="c">${x.target}</td><td class="c">${x.realisasi}</td><td class="c">${esc(x.satuan)}</td><td class="c">${x.capaian}%</td><td>${esc(x.keterangan)}</td><td class="im2">${f}</td></tr>`;
+    });
   }
   return `<div class="rpt rekap"><h3>REKAPITULASI LAPORAN BUKTI DUKUNG SKP HARIAN</h3>
   <table class="id"><tr><td>Nama</td><td class="v">${esc(PEG.nama)}</td></tr><tr><td>NIP</td><td class="v">${esc(PEG.nip)}</td></tr>
    <tr><td>Jabatan</td><td class="v">${esc(PEG.jabatan)}</td></tr><tr><td>Unit Kerja</td><td class="v">${esc(PEG.unit)}</td></tr>
    <tr><td>Bulan</td><td class="v">${BLN[m - 1]} ${y}</td></tr></table>
-  <table class="tb rk"><tr><th>No</th><th>Hari / Tanggal</th><th>Jumlah Kegiatan</th><th>Rata-rata Capaian</th><th>Jumlah Foto</th><th>Keterangan</th></tr>${rows}
-   <tr><th colspan="2">JUMLAH</th><th>${tk}</th><th>-</th><th>${tf}</th><th>${tl} laporan dari ${n} hari</th></tr></table>${sigHTML()}</div>`;
+  <table class="tb rk"><colgroup><col style="width:5%"><col style="width:30%"><col style="width:6%"><col style="width:8%"><col style="width:9%"><col style="width:8%"><col style="width:14%"><col style="width:20%"></colgroup>
+   <thead><tr><th>No</th><th>Uraian Pekerjaan / Kegiatan</th><th>Target</th><th>Realisasi</th><th>Satuan</th><th>Capaian</th><th>Keterangan</th><th>Dokumentasi</th></tr></thead>
+   <tbody>${rows}</tbody></table>${sigHTML()}</div>`;
 }
 async function loadMon() {
   const b = $('rBln').value; if (!b) return toast('Pilih bulan dulu', 1);
@@ -498,7 +841,7 @@ function renderMon(mode) {
 }
 function waitImgs(el) {
   const ps = [...el.querySelectorAll('img')].map(i => i.complete ? 1 : new Promise(r => { i.onload = i.onerror = r; }));
-  return Promise.race([Promise.all(ps), new Promise(r => setTimeout(r, 20000))]);
+  return Promise.race([Promise.all(ps), new Promise(r => setTimeout(r, 45000))]);
 }
 async function printMon(full, pdf) {
   await loadMon(); if (!MON) return;
@@ -517,11 +860,9 @@ function savePdf() {
 
 // ===== MULAI =====
 (async function () {
-  show('dashboard');
-  try { PEG = await call('getPegawai'); } catch (e) { toast('Gagal terhubung: ' + e.message, 1); }
-  await loadMaster();
-  refresh();
-  if (!PEG.nama) show('pengaturan');
+  document.querySelectorAll('.lbl-ver').forEach(e => e.textContent = 'Versi ' + APP_VERSION);
+  TOKEN = store.get('skp_token'); USER = store.get('skp_user');
+  if (TOKEN) await startApp(); else showLogin('');
 })();
 </script>
 </body>
