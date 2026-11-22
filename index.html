@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
 <title>SKP Harian</title>
 <style>
 :root{--bg:#f4f6fa;--card:#fff;--line:#d9dee7;--pri:#1f4e9c;--txt:#1d2433;--mut:#667085;--red:#c0392b}
@@ -79,8 +80,31 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
 .pgc svg{width:140px;height:140px}.pgc b{display:block;margin-top:6px;font-size:16px}.pgc span{display:block;color:var(--mut);font-size:13px;min-height:20px}
 .pgc small{display:block;color:var(--mut);font-size:11px;margin-top:10px}
 .pgbar{height:8px;background:#eef0f6;border-radius:8px;margin-top:10px;overflow:hidden}.pgbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4f46e5,#7c3aed);transition:width .25s linear}
-.mbg{display:none;position:fixed;inset:0;background:rgba(17,17,40,.55);z-index:250;align-items:center;justify-content:center;padding:16px}
-#photoDrop.over{outline:2px dashed var(--pri);outline-offset:-6px;background:#f7f7ff}
+.calwrap{position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cal{display:none;position:absolute;z-index:60;top:100%;left:0;margin-top:8px;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(16,24,40,.2);padding:14px;width:322px;max-width:92vw}
+.cal .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cal .ch button{border:0;background:#eef0fb;border-radius:10px;width:34px;height:34px;font-size:18px;cursor:pointer}
+.cal .cg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
+.cal .w{font-size:11px;font-weight:700;color:var(--mut);padding:4px 0}.cal .w.r{color:#d92d20}
+.cal .cd{border:0;background:none;border-radius:10px;height:36px;font:inherit;cursor:pointer;color:var(--txt)}
+.cal .cd:hover{background:#eef0fb}.cal .cd.empty{visibility:hidden}
+.cal .cd.weekend{color:#d92d20;font-weight:700}
+.cal .cd.nasional{color:#d92d20;background:#fee4e2;font-weight:700}
+.cal .cd.cuti{color:#b54708;background:#fef0c7;font-weight:700}
+.cal .cd.today{outline:2px solid #a5b4fc}
+.cal .cd.sel{background:var(--pri)!important;color:#fff!important}
+.cal .lg{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin-top:10px}
+.cal .lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.cal .ml{font-size:12px;margin-top:8px;border-top:1px dashed var(--line);padding-top:8px;max-height:112px;overflow:auto}
+.cal .ml div{display:flex;gap:8px;margin-bottom:2px}.cal .ml b{min-width:44px}
+.cal .cf{display:flex;justify-content:space-between;margin-top:10px}
+.tinfo{font-size:13px;font-weight:600}.tinfo.nasional,.tinfo.weekend{color:#d92d20}.tinfo.cuti{color:#b54708}.tinfo.kerja{color:#16a34a}
+.rpt .rk tr.dh.lb td,.rpt .rk tr.dh.lb td small{color:#b42318}
+.pw{position:relative}.pw input{padding-right:46px}
+.pw .eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;padding:8px;color:var(--mut);display:grid;place-items:center;border-radius:8px}
+.pw .eye:hover{color:var(--pri);background:#eef0fb}
+#verBar{display:none;position:fixed;top:0;left:0;right:0;z-index:400;background:#fef0c7;color:#7a2e0e;padding:10px 14px;font-size:13px;text-align:center;border-bottom:1px solid #fedf89}
+#verBar button{margin-left:10px;border:0;border-radius:8px;background:#b54708;color:#fff;padding:5px 12px;font:inherit;font-weight:600;cursor:pointer}
 /* ===== LAPORAN ===== */
 .rpt{background:#fff;width:210mm;max-width:100%;margin:0 auto;padding:12mm;font:11pt Arial,sans-serif;color:#000;border:1px solid var(--line)}
 .rpt h3{text-align:center;font-size:14pt;margin:2mm 0 5mm}
@@ -125,15 +149,8 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
 </style>
 </head>
 <body class="locked">
-<datalist id="dlSatuan"></datalist><div id="loading"></div><div id="toast"></div>
-<div class="mbg" id="drvBox"><div class="pgc" style="width:420px;text-align:left">
- <b style="font-size:17px">☁️ Ambil dari Google Drive</b>
- <label>Link file atau folder (satu link per baris)</label>
- <textarea id="drvLinks" style="min-height:110px" placeholder="https://drive.google.com/file/d/....&#10;https://drive.google.com/drive/folders/...."></textarea>
- <small>Pastikan link dibagikan ke "Siapa saja yang memiliki link". Folder: gambar di dalamnya diambil sesuai sisa kotak foto.</small>
- <div class="row" style="margin-top:12px"><button class="b" onclick="driveImport()">Ambil Foto</button><button class="b g" onclick="$('drvBox').style.display='none'">Batal</button></div>
-</div></div>
-<div id="pgBox"><div class="pgc">
+<datalist id="dlSatuan"></datalist><div id="loading"></div><div id="verBar"></div>
+<div id="toast"></div><div id="pgBox"><div class="pgc">
  <svg viewBox="0 0 120 120"><circle class="rg-bg" cx="60" cy="60" r="52"/><circle id="pgRing" cx="60" cy="60" r="52" transform="rotate(-90 60 60)" style="fill:none;stroke:#4f46e5;stroke-width:12;stroke-linecap:round;stroke-dasharray:326.73;stroke-dashoffset:326.73;transition:stroke-dashoffset .25s linear"/><text id="pgPct" class="rg-t" x="60" y="68">0%</text></svg>
  <b id="pgTitle">Menyimpan...</b><span id="pgLbl"></span>
  <div class="pgbar"><i id="pgBar"></i></div><small>Mohon tunggu, jangan tutup halaman ini.</small>
@@ -176,7 +193,7 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
  <div class="row" style="margin:22px 0 12px;justify-content:space-between"><h2 style="margin:0">Progres SKP</h2>
   <input type="month" id="dBln" onchange="loadDash()" style="max-width:180px"></div>
  <div class="grid rings" id="dRings"></div>
- <p style="color:var(--mut);font-size:12px">Hari kerja dihitung Senin-Jumat (tanpa memperhitungkan hari libur nasional).</p>
+ <p style="color:var(--mut);font-size:12px">Hari kerja = Senin-Jumat di luar libur nasional dan cuti bersama (SKB 3 Menteri; dapat diatur admin).</p>
 </section>
 
 <!-- INPUT -->
@@ -184,23 +201,16 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
  <h2 id="iJudul">Input SKP Harian</h2>
  <div class="card">
   <label>Hari / Tanggal</label>
-  <input type="date" id="iTgl" style="max-width:220px">
+  <div class="calwrap"><input type="hidden" id="iTgl">
+   <button class="b g" id="iTglBtn" type="button" onclick="toggleCal()">📅 Pilih tanggal</button>
+   <span class="tinfo" id="iTglInfo"></span>
+   <div class="cal" id="cal"></div></div>
  </div>
  <div class="card"><b>Pilih Kegiatan dari Daftar</b> <small style="color:var(--mut)">(klik untuk menambahkan ke laporan)</small>
   <input id="pickQ" placeholder="Cari kegiatan..." oninput="renderPick()" style="margin-top:8px"><div id="pickList"></div></div>
  <div class="card"><b>Kegiatan</b><div id="rows" style="margin-top:8px"></div>
   <button class="b g" onclick="addRow()">+ Tambah baris</button></div>
- <div class="card" id="photoDrop"><b>Dokumentasi Foto</b>
-  <div class="row" style="margin:10px 0 4px"><small style="color:var(--mut)">Ambil bukti dari:</small>
-   <button class="b g" onclick="pickMulti()">🖼️ Galeri / WhatsApp</button>
-   <button class="b g" onclick="pasteClip()">📋 Tempel (WhatsApp Web)</button>
-   <button class="b g" onclick="openDrive()">☁️ Google Drive</button>
-   <input type="file" id="fileMulti" accept="image/*" multiple hidden onchange="addImages([...this.files]);this.value=''"></div>
-  <details style="margin-bottom:8px;color:var(--mut);font-size:13px"><summary style="cursor:pointer">Cara mengambil foto dari WhatsApp &amp; Drive</summary>
-   <p style="margin:6px 0"><b>WhatsApp di HP:</b> tekan <i>Galeri / WhatsApp</i>, lalu pilih foto dari folder <i>WhatsApp Images</i> (boleh pilih beberapa sekaligus). Foto yang belum ada di galeri: buka chat, tahan foto, pilih <i>Simpan</i>.<br>
-   <b>WhatsApp Web / komputer:</b> klik kanan foto di WhatsApp Web, pilih <i>Salin gambar</i>, lalu tekan <i>Tempel</i> atau Ctrl+V di halaman ini. Foto juga bisa diseret ke kotak ini.<br>
-   <b>Google Drive:</b> tekan <i>Google Drive</i>, tempel link file atau folder (satu link per baris). Link harus dibagikan ke "Siapa saja yang memiliki link".</p></details>
-  <div class="ph" id="photos" style="margin-top:8px"></div>
+ <div class="card"><b>Dokumentasi Foto</b><div class="ph" id="photos" style="margin-top:8px"></div>
   <div class="row" style="margin-top:8px"><button class="b g" id="btnAddFoto" onclick="addFoto()">+ Tambah Foto</button>
   <button class="b g" id="btnDelFoto" onclick="delFoto()">− Hapus Foto Terakhir</button><small id="fotoInfo" style="color:var(--mut)"></small></div></div>
  <div class="row"><button class="b" id="btnSave" onclick="saveReport()">Simpan</button>
@@ -272,6 +282,13 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
     <label style="margin:0"><input type="checkbox" id="nuLegacy" style="width:auto"> Ambil data lama</label><button class="b" onclick="adBuat()">Buat akun</button></div>
    <small style="color:var(--mut)">Berikan Username dan Password ini ke pengguna. Pengguna mengisi Nama sendiri di Pengaturan (sekali, lalu terkunci).</small></div>
   <div class="card tw"><table class="t"><thead><tr><th>Username</th><th>Nama</th><th>Status</th><th>Laporan</th><th>Laporan terakhir</th><th>Login terakhir</th><th>Aksi</th></tr></thead><tbody id="adRows"></tbody></table></div>
+  <div class="card"><div class="row" style="justify-content:space-between"><b>Hari Libur Nasional &amp; Cuti Bersama</b>
+   <select id="lbThn" onchange="lbRender()" style="max-width:110px"></select></div>
+   <p style="color:var(--mut);font-size:12px;margin:6px 0">Dipakai untuk menandai kalender merah di pemilihan tanggal, rekap, dan hitungan hari kerja. Data bawaan 2026 dan 2027 mengikuti SKB 3 Menteri.</p>
+   <div class="row" style="margin-bottom:10px"><input type="date" id="lbTgl" style="max-width:170px"><input id="lbKet" placeholder="Keterangan" style="max-width:240px">
+    <select id="lbJenis" style="max-width:160px"><option>Libur Nasional</option><option>Cuti Bersama</option><option>Libur Khusus</option></select>
+    <button class="b" onclick="lbSimpan()">Simpan</button><button class="b g" onclick="lbBawaan()">Tambah data bawaan</button></div>
+   <div class="tw"><table class="t"><thead><tr><th>Tanggal</th><th>Keterangan</th><th>Jenis</th><th></th></tr></thead><tbody id="lbRows"></tbody></table></div></div>
   <button class="b g" onclick="adLock()">Kunci kembali</button>
  </div>
 </section>
@@ -301,14 +318,14 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
 // ===== KONFIGURASI =====
 // Kosong  = aplikasi dibuka lewat URL Web App Apps Script (otomatis memakai google.script.run)
 // Diisi   = aplikasi di GitHub Pages: tempel URL Web App berakhiran /exec
-const API_URL = "https://script.google.com/macros/s/AKfycbyn2epqsIJlr-qdBT1u8cf3eUMS0fJccMdvzNLWMGLdaqGr8nDBznDrNHuhQ3p5j9q1/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzz7SRIBQ1CXuMp_GcgE3CAYBDG3h7HpBsg2l8-n9nwGiRC7u0WNTmUHsW9JmTE0N3x/exec";
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let PEG = {}, LIST = [], FOTO = [{},{},{},{}], EDIT = null, CUR = null;
 
 // ===== VERSI, LOGIN, SESI =====
-const APP_VERSION = '1.3';   // 1.0 -> 1.1 ... 1.9 -> 2.0
+const APP_VERSION = '1.7';   // 1.0 -> 1.1 ... 1.9 -> 2.0
 let TOKEN = '', USER = '', ADMINKEY = '', ADLIST = [];
 const store = {
   get: k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
@@ -317,7 +334,29 @@ const store = {
 };
 const lgMsg = m => $('lgMsg').textContent = m || '';
 function lgSetup(on) { $('lgForm').style.display = on ? 'none' : 'block'; $('lgSetup').style.display = on ? 'block' : 'none'; lgMsg(''); }
+// ===== TAMPIL/SEMBUNYIKAN PASSWORD (ikon mata) =====
+const EYE_ON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+function setEye(inp, show) {
+  inp.type = show ? 'text' : 'password';
+  const b = inp.parentNode.querySelector('.eye');
+  b.innerHTML = show ? EYE_OFF : EYE_ON;
+  b.title = b.ariaLabel = show ? 'Sembunyikan password' : 'Tampilkan password';
+}
+function initEyes() {
+  ['lgPass', 'bsPass', 'bsKey', 'adKey'].forEach(id => {
+    const inp = $(id); if (!inp || inp.parentNode.classList.contains('pw')) return;
+    const w = document.createElement('div'); w.className = 'pw';
+    inp.parentNode.insertBefore(w, inp); w.appendChild(inp);
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'eye';
+    b.onmousedown = e => e.preventDefault();   // fokus tetap di kolom password
+    b.onclick = () => setEye(inp, inp.type === 'password');
+    w.appendChild(b); setEye(inp, false);
+  });
+}
+function hidePasswords() { ['lgPass', 'bsPass', 'bsKey', 'adKey'].forEach(id => { const i = $(id); if (i && i.parentNode.classList.contains('pw')) setEye(i, false); }); }
 async function showLogin(msg) {
+  hidePasswords();
   document.body.classList.add('locked'); lgSetup(false); lgMsg(msg);
   try { const r = await call('cekAwal'); $('lgFirst').style.display = r.adaUser ? 'none' : 'block'; } catch (e) { lgMsg('Gagal terhubung: ' + e.message); }
 }
@@ -327,7 +366,7 @@ function forceLogout(msg) {
 function logout() { if (confirm('Keluar dari aplikasi?')) forceLogout(''); }
 async function afterLogin(r) {
   TOKEN = r.token; USER = r.username; store.set('skp_token', TOKEN); store.set('skp_user', USER);
-  $('lgPass').value = ''; $('bsPass').value = ''; $('bsKey').value = ''; await startApp();
+  $('lgPass').value = ''; $('bsPass').value = ''; $('bsKey').value = ''; hidePasswords(); await startApp();
 }
 async function doLogin() {
   const u = $('lgUser').value.trim(), p = $('lgPass').value;
@@ -338,8 +377,31 @@ async function doBootstrap() {
   try { await afterLogin(await call('bootstrap', { username: $('bsUser').value, password: $('bsPass').value, adminKey: $('bsKey').value })); }
   catch (e) { lgMsg(e.message); }
 }
+// ===== CEK VERSI (agar link lama tidak "tertinggal") =====
+const verCmp = (a, b) => { const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number); return (x[0] - y[0]) || ((x[1] || 0) - (y[1] || 0)); };
+function hardReload() { location.href = location.pathname + '?v=' + Date.now(); }
+function verBar(html) { const b = $('verBar'); b.innerHTML = html; b.style.display = 'block'; }
+const BTN_RELOAD = '<button onclick="hardReload()">Muat ulang sekarang</button>';
+// 1) versi server (Code.gs) vs versi tampilan ini
+async function cekVersi() {
+  let sv; try { sv = (await call('ping')).versi; } catch (e) { return; }
+  if (!sv) return verBar('⚠️ Server (Code.gs) belum diperbarui ke versi terbaru. Admin: Apps Script → Deploy → Manage deployments → Edit → Version: <b>New version</b> → Deploy.');
+  const c = verCmp(sv, APP_VERSION);
+  if (c > 0) verBar('🔄 Versi baru <b>' + sv + '</b> tersedia (Anda memakai ' + APP_VERSION + ').' + BTN_RELOAD);
+  else if (c < 0) verBar('⚠️ Tampilan Versi ' + APP_VERSION + ' tetapi server (Code.gs) masih Versi ' + sv + '. Admin: deploy ulang Code.gs (Manage deployments → Edit → <b>New version</b>).');
+}
+// 2) file halaman terbaru di hosting (GitHub Pages) vs yang sedang dibuka
+async function cekHalaman() {
+  if (!/^https?:$/.test(location.protocol) || /script\.google|googleusercontent/.test(location.host)) return;
+  try {
+    const t = await (await fetch(location.pathname + '?cb=' + Date.now(), { cache: 'no-store' })).text();
+    const m = t.match(/const APP_VERSION = '([\d.]+)'/);
+    if (m && verCmp(m[1], APP_VERSION) > 0) verBar('🔄 Versi baru <b>' + m[1] + '</b> tersedia (Anda memakai ' + APP_VERSION + ').' + BTN_RELOAD);
+  } catch (e) {}
+}
 async function startApp() {
   document.body.classList.remove('locked'); $('uLbl').textContent = '👤 ' + USER;
+  try { setLibur(await call('getLibur')); } catch (e) { return; }
   show('dashboard');
   try { PEG = await call('getPegawai'); } catch (e) { return; }
   await loadMaster(); refresh();
@@ -351,10 +413,29 @@ async function adOpen() {
   const k = $('adKey').value; if (!k) return toast('Masukkan kode key admin', 1);
   try { await call('adminCek', { adminKey: k }); ADMINKEY = k; $('adKey').value = ''; adShow(); } catch (e) { toast(e.message, 1); }
 }
+function lbRender() {
+  const sel = $('lbThn'), cur = sel.value || String(new Date().getFullYear());
+  const yrs = [...new Set(LIBURLIST.map(x => x.tanggal.slice(0, 4)).concat([String(new Date().getFullYear())]))].sort();
+  sel.innerHTML = yrs.map(y => `<option ${y === cur ? 'selected' : ''}>${y}</option>`).join('');
+  $('lbRows').innerHTML = LIBURLIST.filter(x => x.tanggal.startsWith(sel.value)).map(x => `<tr><td>${fmtLong(x.tanggal)}</td><td>${esc(x.ket)}</td>
+   <td><span class="badge ${x.jenis === 'Libur Nasional' ? '' : 'w'}">${esc(x.jenis)}</span></td>
+   <td><button class="b sm rd" onclick="lbHapus('${x.tanggal}')">Hapus</button></td></tr>`).join('') || '<tr><td colspan="4" style="color:var(--mut)">Belum ada data tahun ini. Klik "Tambah data bawaan" atau isi manual.</td></tr>';
+}
+async function lbCall(action, payload, msg) {
+  try { await call(action, Object.assign({ adminKey: ADMINKEY }, payload)); setLibur(await call('getLibur')); lbRender(); toast(msg); } catch (e) { toast(e.message, 1); }
+}
+function lbSimpan() {
+  if (!$('lbTgl').value || !$('lbKet').value.trim()) return toast('Isi tanggal dan keterangan libur', 1);
+  lbCall('adminLiburSimpan', { tanggal: $('lbTgl').value, ket: $('lbKet').value, jenis: $('lbJenis').value }, 'Hari libur disimpan');
+  $('lbKet').value = '';
+}
+function lbHapus(t) { if (confirm('Hapus hari libur ' + fmtLong(t) + '?')) lbCall('adminLiburHapus', { tanggal: t }, 'Hari libur dihapus'); }
+function lbBawaan() { lbCall('adminLiburBawaan', {}, 'Data bawaan ditambahkan'); }
 function adLock() { ADMINKEY = ''; $('adLock').style.display = 'block'; $('adBody').style.display = 'none'; }
 async function adShow() {
   $('adLock').style.display = 'none'; $('adBody').style.display = 'block';
   try { ADLIST = await call('adminList', { adminKey: ADMINKEY }); } catch (e) { toast(e.message, 1); return adLock(); }
+  lbRender();
   const fmt = x => x ? new Date(x).toLocaleString('id-ID') : '-';
   $('adStat').innerHTML = `<div class="card stat"><b>${ADLIST.length}</b><span>Pengguna</span></div>
    <div class="card stat"><b>${ADLIST.filter(x => x.status === 'Aktif').length}</b><span>Aktif</span></div>
@@ -428,8 +509,53 @@ function toast(msg, err) {
 // ===== UTIL TANGGAL =====
 const pad = n => String(n).padStart(2, '0');
 const today = () => { const d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
-const fmtLong = t => new Date(t + 'T12:00:00').toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-const hariOf = t => new Date(t + 'T12:00:00').toLocaleDateString('id-ID', { weekday: 'long' });
+const fmtLong = t => { const d = new Date(t + 'T12:00:00'); return HR[d.getDay()] + ', ' + d.getDate() + ' ' + BLN[d.getMonth()] + ' ' + d.getFullYear(); };
+const hariOf = t => HR[new Date(t + 'T12:00:00').getDay()];
+
+// ===== HARI LIBUR & KALENDER =====
+let LIBUR = {}, LIBURLIST = [], CAL = { y: 2026, m: 0 };
+function setLibur(list) { LIBURLIST = list || []; LIBUR = {}; LIBURLIST.forEach(x => LIBUR[x.tanggal] = { n: x.ket, j: x.jenis }); }
+// Status satu tanggal: nasional / cuti / weekend / kerja
+function dayInfo(iso) {
+  const g = new Date(iso + 'T12:00:00').getDay(), h = LIBUR[iso];
+  if (h) return { type: h.j === 'Cuti Bersama' ? 'cuti' : 'nasional', text: h.j + ': ' + h.n };
+  if (g === 0 || g === 6) return { type: 'weekend', text: 'hari ' + HR[g] + ' (libur akhir pekan)' };
+  return { type: 'kerja', text: 'hari kerja' };
+}
+function setTgl(v) {
+  $('iTgl').value = v;
+  if (!v) { $('iTglBtn').textContent = '📅 Pilih tanggal'; $('iTglInfo').textContent = ''; $('iTglInfo').className = 'tinfo'; return; }
+  const i = dayInfo(v);
+  $('iTglBtn').textContent = '📅 ' + fmtLong(v);
+  $('iTglInfo').className = 'tinfo ' + i.type;
+  $('iTglInfo').textContent = (i.type === 'kerja' ? '✅ ' : i.type === 'cuti' ? '🟠 ' : '🔴 ') + (i.type === 'kerja' ? 'Hari kerja' : i.text.charAt(0).toUpperCase() + i.text.slice(1));
+}
+function toggleCal() {
+  const c = $('cal');
+  if (c.style.display === 'block') return closeCal();
+  const v = $('iTgl').value || today(), p = v.split('-').map(Number);
+  CAL = { y: p[0], m: p[1] - 1 }; renderCal(); c.style.display = 'block';
+}
+function closeCal() { $('cal').style.display = 'none'; }
+function calNav(d) { CAL.m += d; if (CAL.m < 0) { CAL.m = 11; CAL.y--; } if (CAL.m > 11) { CAL.m = 0; CAL.y++; } renderCal(); }
+function renderCal() {
+  const y = CAL.y, m = CAL.m, off = (new Date(y, m, 1).getDay() + 6) % 7, n = new Date(y, m + 1, 0).getDate(), sel = $('iTgl').value, td = today();
+  const pre = y + '-' + pad(m + 1) + '-';
+  let g = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map((x, i) => `<div class="w ${i > 4 ? 'r' : ''}">${x}</div>`).join('');
+  for (let i = 0; i < off; i++) g += '<button class="cd empty" type="button"></button>';
+  for (let d = 1; d <= n; d++) {
+    const iso = pre + pad(d), i = dayInfo(iso);
+    g += `<button type="button" class="cd ${i.type}${iso === sel ? ' sel' : ''}${iso === td ? ' today' : ''}" title="${esc(i.text)}" onclick="pickDay('${iso}')">${d}</button>`;
+  }
+  const ml = LIBURLIST.filter(x => x.tanggal.startsWith(pre)).map(x => `<div><b style="color:${x.jenis === 'Cuti Bersama' ? '#b54708' : '#d92d20'}">${+x.tanggal.slice(8)} ${BLN[m].slice(0, 3)}</b><span>${esc(x.ket)}${x.jenis === 'Cuti Bersama' ? ' (cuti bersama)' : ''}</span></div>`).join('');
+  $('cal').innerHTML = `<div class="ch"><button type="button" onclick="calNav(-1)">‹</button><b>${BLN[m]} ${y}</b><button type="button" onclick="calNav(1)">›</button></div>
+   <div class="cg">${g}</div>
+   <div class="lg"><span><i style="background:#fee4e2"></i>Libur nasional</span><span><i style="background:#fef0c7"></i>Cuti bersama</span><span style="color:#d92d20"><b>Sab/Min</b> libur akhir pekan</span></div>
+   ${ml ? '<div class="ml">' + ml + '</div>' : ''}
+   <div class="cf"><button type="button" class="b s g" onclick="pickDay(today())">Hari ini</button><button type="button" class="b s g" onclick="closeCal()">Tutup</button></div>`;
+}
+function pickDay(iso) { setTgl(iso); closeCal(); const i = dayInfo(iso); if (i.type !== 'kerja') toast('Tanggal ini ' + i.text, 1); }
+document.addEventListener('click', e => { const w = document.querySelector('.calwrap'); if (w && !w.contains(e.target)) closeCal(); });
 
 // ===== NAVIGASI =====
 function show(v) {
@@ -467,7 +593,7 @@ async function loadDash() {
   const b = $('dBln').value; let reps = [];
   try { reps = await call('getBulan', { bulan: b }); } catch (e) { return; }
   const [y, m] = b.split('-').map(Number), n = new Date(y, m, 0).getDate();
-  let kerja = 0; for (let d = 1; d <= n; d++) { const g = new Date(y, m - 1, d).getDay(); if (g > 0 && g < 6) kerja++; }
+  let kerja = 0; for (let d = 1; d <= n; d++) if (dayInfo(b + '-' + pad(d)).type === 'kerja') kerja++;
   const items = reps.flatMap(r => r.items), T = items.reduce((a, x) => a + (+x.target || 0), 0), R = items.reduce((a, x) => a + (+x.realisasi || 0), 0);
   const cap = items.length ? items.reduce((a, x) => a + (+x.capaian || 0), 0) / items.length : 0;
   const withFoto = reps.filter(r => r.fotos.some(f => f.url)).length;
@@ -481,7 +607,7 @@ async function loadDash() {
 function renderList() {
   const d = $('fTgl').value, b = $('fBln').value, q = $('fTxt').value.toLowerCase();
   const rows = LIST.filter(x => (!d || x.tanggal === d) && (!b || x.tanggal.startsWith(b)) && (!q || x.uraian.toLowerCase().includes(q)));
-  $('listBody').innerHTML = rows.map(x => `<tr><td>${fmtLong(x.tanggal).replace(/^\w+, /, '')}</td><td>${esc(x.hari)}</td><td>${x.jumlah}</td>
+  $('listBody').innerHTML = rows.map(x => `<tr><td>${fmtLong(x.tanggal).replace(/^\w+, /, '')}</td><td>${esc(hariOf(x.tanggal))}${dayInfo(x.tanggal).type !== 'kerja' ? ` <span class="badge w" title="${esc(dayInfo(x.tanggal).text)}">Libur</span>` : ''}</td><td>${x.jumlah}</td>
    <td><span class="badge ${x.status === 'Lengkap' ? '' : 'w'}">${esc(x.status)}</span></td>
    <td class="row"><button class="b s g" onclick="openReport('${x.tanggal}')">Lihat</button>
    <button class="b s g" onclick="editReport('${x.tanggal}')">Edit</button>
@@ -623,63 +749,6 @@ function buildPhotos() {
   $('btnDelFoto').style.display = FOTO.length > 4 ? '' : 'none';
   $('fotoInfo').textContent = FOTO.length + ' dari maks. 10 foto';
 }
-// ===== AMBIL BUKTI: galeri/WhatsApp, tempel, Google Drive =====
-function emptySlot() {
-  let i = FOTO.findIndex(f => !f.data && !f.url);
-  if (i < 0 && FOTO.length < 10) { FOTO.push({}); i = FOTO.length - 1; }
-  return i;
-}
-function pickMulti() { $('fileMulti').click(); }
-async function addImages(files) {
-  files = (files || []).filter(f => f && /^image\//.test(f.type));
-  if (!files.length) return toast('Tidak ada file gambar', 1);
-  let n = 0;
-  for (const f of files) {
-    const i = emptySlot(); if (i < 0) { toast('Maksimal 10 foto. ' + n + ' foto ditambahkan', 1); buildPhotos(); return; }
-    try { FOTO[i].data = await compress(f); n++; } catch (e) { toast('Ada foto yang tidak dapat dibaca', 1); }
-  }
-  buildPhotos(); toast(n + ' foto ditambahkan');
-}
-async function pasteClip() {
-  try {
-    const files = [];
-    for (const it of await navigator.clipboard.read()) {
-      const t = it.types.find(x => x.startsWith('image/'));
-      if (t) files.push(new File([await it.getType(t)], 'tempel.' + t.split('/')[1], { type: t }));
-    }
-    if (!files.length) return toast('Belum ada gambar yang disalin', 1);
-    addImages(files);
-  } catch (e) { toast('Tekan Ctrl+V di halaman ini untuk menempel gambar', 1); }
-}
-document.addEventListener('paste', e => {
-  if (!$('v-input').classList.contains('on')) return;
-  const fs = [...(e.clipboardData ? e.clipboardData.files : [])].filter(f => /^image\//.test(f.type));
-  if (fs.length) { e.preventDefault(); addImages(fs); }
-});
-['dragover', 'dragleave', 'drop'].forEach(ev => document.addEventListener(ev, e => {
-  const z = $('photoDrop'); if (!z || !z.contains(e.target) || !$('v-input').classList.contains('on')) return;
-  e.preventDefault(); z.classList.toggle('over', ev === 'dragover');
-  if (ev === 'drop') addImages([...e.dataTransfer.files]);
-}));
-function openDrive() { $('drvLinks').value = ''; $('drvBox').style.display = 'flex'; }
-async function driveImport() {
-  const links = $('drvLinks').value.split(/\s+/).map(s => s.trim()).filter(Boolean);
-  if (!links.length) return toast('Tempel link Google Drive dulu', 1);
-  $('drvBox').style.display = 'none';
-  Prog.start('Mengambil dari Google Drive', links.length);
-  let n = 0;
-  try {
-    for (let k = 0; k < links.length; k++) {
-      Prog.next('Mengambil link ' + (k + 1) + ' dari ' + links.length + '...');
-      const free = FOTO.filter(f => !f.data && !f.url).length + (10 - FOTO.length);
-      if (free <= 0) { toast('Maksimal 10 foto', 1); break; }
-      const res = await call('importDrive', { link: links[k], max: free });
-      res.forEach(r => { const i = emptySlot(); if (i >= 0) { FOTO[i].url = r.url; n++; } });
-      Prog.ok();
-    }
-    await Prog.end('Selesai'); buildPhotos(); toast(n + ' foto diambil dari Drive');
-  } catch (e) { Prog.fail(); buildPhotos(); toast(e.message, 1); }
-}
 function addFoto() { if (FOTO.length >= 10) return toast('Maksimal 10 foto', 1); FOTO.push({}); buildPhotos(); }
 function delFoto() {
   if (FOTO.length <= 4) return;
@@ -705,7 +774,7 @@ async function pickFoto(i, el) {
   catch (e) { toast('Foto tidak dapat dibaca', 1); }
 }
 function newInput(tgl) {
-  EDIT = null; $('iJudul').textContent = 'Input SKP Harian'; $('iTgl').value = tgl;
+  EDIT = null; $('iJudul').textContent = 'Input SKP Harian'; setTgl(tgl);
   $('rows').innerHTML = ''; for (let i = 0; i < 6; i++) addRow();
   FOTO = [{}, {}, {}, {}]; buildPhotos(); $('pickQ').value = ''; renderPick();
   document.querySelectorAll('.view').forEach(e => e.classList.toggle('on', e.id === 'v-input'));
@@ -743,6 +812,8 @@ async function saveReport() {
     items.push(it);
   }
   if (!items.length) return toast('Uraian kegiatan tidak boleh kosong', 1);
+  const di = dayInfo(tgl);
+  if (di.type !== 'kerja' && !confirm('Tanggal ' + fmtLong(tgl) + ' adalah ' + di.text + '.\nTetap simpan laporan pada tanggal ini?')) return;
   if (!EDIT && LIST.some(x => x.tanggal === tgl) && !confirm('Laporan tanggal ini sudah ada. Timpa?')) return;
   $('btnSave').disabled = true; $('btnSave').textContent = 'Menyimpan...';
   const baru = FOTO.map((f, i) => f.data ? i : -1).filter(i => i >= 0);
@@ -814,7 +885,8 @@ function rekapHTML(bln, reps) {
   let rows = '', no = 0;
   for (let d = 1; d <= n; d++) {
     const t = bln + '-' + pad(d), r = map[t], h = HR[new Date(t + 'T12:00:00').getDay()];
-    rows += `<tr class="dh"><td colspan="8">HARI KE ${d} <small>- ${h}, ${d} ${BLN[m - 1]} ${y}${r ? '' : ' (tidak ada laporan)'}</small></td></tr>`;
+    const di = dayInfo(t), lb = di.type !== 'kerja';
+    rows += `<tr class="dh${lb ? ' lb' : ''}"><td colspan="8">HARI KE ${d} <small>- ${h}, ${d} ${BLN[m - 1]} ${y}${r ? (lb ? ' (' + esc(di.text) + ')' : '') : ' (' + (lb ? esc(di.text) : 'tidak ada laporan') + ')'}</small></td></tr>`;
     if (!r) continue;
     r.items.forEach((x, i) => {
       const u = r.fotos[i] && r.fotos[i].url; // kegiatan ke-i memakai foto ke-i
@@ -860,6 +932,7 @@ function savePdf() {
 
 // ===== MULAI =====
 (async function () {
+  initEyes(); cekHalaman(); cekVersi();
   document.querySelectorAll('.lbl-ver').forEach(e => e.textContent = 'Versi ' + APP_VERSION);
   TOKEN = store.get('skp_token'); USER = store.get('skp_user');
   if (TOKEN) await startApp(); else showLogin('');
