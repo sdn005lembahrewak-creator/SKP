@@ -105,6 +105,15 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
 .pw .eye:hover{color:var(--pri);background:#eef0fb}
 #verBar{display:none;position:fixed;top:0;left:0;right:0;z-index:400;background:#fef0c7;color:#7a2e0e;padding:10px 14px;font-size:13px;text-align:center;border-bottom:1px solid #fedf89}
 #verBar button{margin-left:10px;border:0;border-radius:8px;background:#b54708;color:#fff;padding:5px 12px;font:inherit;font-weight:600;cursor:pointer}
+.mg summary{cursor:pointer;display:flex;align-items:center;gap:10px;font-size:16px;list-style:none}.mg summary::-webkit-details-marker{display:none}
+.mg summary::before{content:'▸';transition:transform .15s}.mg[open] summary::before{transform:rotate(90deg)}.mg summary small{color:var(--mut);margin-left:auto}
+.cal .cd.ada{background:#d1fadf;color:#067647;font-weight:700;position:relative}
+.cal .cd.ada::after{content:'✓';position:absolute;right:4px;top:1px;font-size:9px}
+.cal .cd.ada.weekend,.cal .cd.ada.nasional,.cal .cd.ada.cuti{color:#d92d20}
+.cal .cd.miss{box-shadow:inset 0 0 0 1.5px #fda29b}
+.rpt.cap{padding:12mm;font-size:11pt}
+#splash{position:fixed;inset:0;z-index:500;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .3s}
+#splash svg{width:170px;height:170px}#splash .spt{font-size:17px;font-weight:700;color:#312e81;letter-spacing:.02em}
 /* ===== LAPORAN ===== */
 .rpt{background:#fff;width:210mm;max-width:100%;margin:0 auto;padding:12mm;font:11pt Arial,sans-serif;color:#000;border:1px solid var(--line)}
 .rpt h3{text-align:center;font-size:14pt;margin:2mm 0 5mm}
@@ -149,6 +158,7 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
 </style>
 </head>
 <body class="locked">
+<div id="splash"><svg viewBox="0 0 120 120"><circle class="rg-bg" cx="60" cy="60" r="52"/><circle id="spRing" cx="60" cy="60" r="52" transform="rotate(-90 60 60)" style="fill:none;stroke:#4f46e5;stroke-width:10;stroke-linecap:round;stroke-dasharray:326.73;stroke-dashoffset:326.73"/><text id="spPct" class="rg-t" x="60" y="68">0%</text></svg><div class="spt">Memuat Halaman</div></div>
 <datalist id="dlSatuan"></datalist><div id="loading"></div><div id="verBar"></div>
 <div id="toast"></div><div id="pgBox"><div class="pgc">
  <svg viewBox="0 0 120 120"><circle class="rg-bg" cx="60" cy="60" r="52"/><circle id="pgRing" cx="60" cy="60" r="52" transform="rotate(-90 60 60)" style="fill:none;stroke:#4f46e5;stroke-width:12;stroke-linecap:round;stroke-dasharray:326.73;stroke-dashoffset:326.73;transition:stroke-dashoffset .25s linear"/><text id="pgPct" class="rg-t" x="60" y="68">0%</text></svg>
@@ -226,7 +236,7 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
   <input id="fTxt" placeholder="Cari uraian kegiatan..." style="flex:1;min-width:160px" oninput="renderList()">
   <button class="b g" onclick="fTgl.value=fBln.value=fTxt.value='';renderList()">Reset</button>
  </div>
- <div class="card tw"><table class="t"><thead><tr><th>Tanggal</th><th>Hari</th><th>Jumlah Kegiatan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="listBody"></tbody></table></div>
+ <div id="listGroups"></div>
 </section>
 
 <!-- CETAK -->
@@ -238,9 +248,23 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
    <button class="b" onclick="doPrint()">🖨 CETAK LAPORAN</button>
    <button class="b g" onclick="doPrint()">PRINT</button>
    <button class="b g" onclick="savePdf()">SIMPAN PDF</button>
+   <button class="b g" onclick="unduhTanggal()">⬇ UNDUH PDF</button>
   </div>
+  <div class="card"><b>Cetak / Unduh per Bulan</b> <small style="color:var(--mut)">(laporan tetap per hari: 1 hari = 1 halaman = 1 file PDF)</small>
+   <div class="row" style="margin-top:10px"><input type="month" id="cBln" style="max-width:180px">
+    <button class="b" onclick="batchPrint($('cBln').value)">🖨 Cetak semua laporan bulan ini</button>
+    <button class="b g" onclick="batchZip($('cBln').value)">⬇ Unduh ZIP (PDF per hari)</button></div></div>
  </div>
  <div id="report" class="rpt"><p class="noprint" style="text-align:center;color:#667085">Pilih tanggal laporan.</p></div>
+</section>
+
+<!-- CETAK KELOMPOK -->
+<section class="view printable" id="v-batch">
+ <div class="noprint"><h2 id="bJudul">Cetak Laporan Harian</h2>
+  <div class="card row"><button class="b" onclick="window.print()">🖨 CETAK SEMUA</button>
+   <button class="b g" onclick="batchZip(BATCH.bln, true)">⬇ UNDUH ZIP</button>
+   <button class="b g" onclick="show('riwayat')">← Kembali ke Riwayat</button><small id="bInfo" style="color:var(--mut)"></small></div></div>
+ <div id="breport"></div>
 </section>
 
 <!-- REKAP -->
@@ -318,14 +342,34 @@ table.t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:va
 // ===== KONFIGURASI =====
 // Kosong  = aplikasi dibuka lewat URL Web App Apps Script (otomatis memakai google.script.run)
 // Diisi   = aplikasi di GitHub Pages: tempel URL Web App berakhiran /exec
-const API_URL = "https://script.google.com/macros/s/AKfycbzAlzQ0f1Wdr55vdDWKq50wSgT_Co7VjRbB-W991UjoDrjcI8PGn0glNC6qPH5kH1ZM/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbw93oQQ1nISQM2PKAoq9x0AshHc7eNdU9p9zAB3vnfQ_1C1j7oIc7_3ff-jbeGR9Kwk/exec";
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let PEG = {}, LIST = [], FOTO = [{},{},{},{}], EDIT = null, CUR = null;
 
+// ===== LAYAR "MEMUAT HALAMAN" (lingkaran 0-100%) =====
+// Persen naik mengikuti tahap persiapan yang nyata (data libur, profil, master, riwayat, dasbor).
+const Splash = {
+  v: 0, cap: 0, timer: null, fs: null,
+  draw() { const p = Math.min(100, Math.floor(this.v)); $('spPct').textContent = p + '%'; $('spRing').style.strokeDashoffset = 326.73 * (1 - p / 100); },
+  start() {
+    if (this.timer) return;
+    $('splash').style.display = 'flex'; $('splash').style.opacity = 1; this.v = 0; this.cap = 8; this.draw();
+    this.timer = setInterval(() => { this.v += (Math.min(this.cap, 99) - this.v) * 0.12; this.draw(); }, 80);
+    clearTimeout(this.fs); this.fs = setTimeout(() => { if (this.timer) this.end(); }, 30000);   // pengaman agar tidak macet
+  },
+  to(p) { this.cap = Math.max(this.cap, p); },
+  async end() {
+    clearInterval(this.timer); this.timer = null; clearTimeout(this.fs); this.v = 100; this.draw();
+    await new Promise(r => setTimeout(r, 450)); $('splash').style.opacity = 0;
+    await new Promise(r => setTimeout(r, 300)); if (!this.timer) $('splash').style.display = 'none';
+  }
+};
+let SHOWP = null;
+
 // ===== VERSI, LOGIN, SESI =====
-const APP_VERSION = '1.7';   // 1.0 -> 1.1 ... 1.9 -> 2.0
+const APP_VERSION = '1.9';   // 1.0 -> 1.1 ... 1.9 -> 2.0
 let TOKEN = '', USER = '', ADMINKEY = '', ADLIST = [];
 const store = {
   get: k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
@@ -383,12 +427,13 @@ function hardReload() { location.href = location.pathname + '?v=' + Date.now(); 
 function verBar(html) { const b = $('verBar'); b.innerHTML = html; b.style.display = 'block'; }
 const BTN_RELOAD = '<button onclick="hardReload()">Muat ulang sekarang</button>';
 // 1) versi server (Code.gs) vs versi tampilan ini
+const SERVER_MIN = '1.8';   // versi Code.gs minimal yang dibutuhkan tampilan ini
 async function cekVersi() {
   let sv; try { sv = (await call('ping')).versi; } catch (e) { return; }
   if (!sv) return verBar('⚠️ Server (Code.gs) belum diperbarui ke versi terbaru. Admin: Apps Script → Deploy → Manage deployments → Edit → Version: <b>New version</b> → Deploy.');
   const c = verCmp(sv, APP_VERSION);
   if (c > 0) verBar('🔄 Versi baru <b>' + sv + '</b> tersedia (Anda memakai ' + APP_VERSION + ').' + BTN_RELOAD);
-  else if (c < 0) verBar('⚠️ Tampilan Versi ' + APP_VERSION + ' tetapi server (Code.gs) masih Versi ' + sv + '. Admin: deploy ulang Code.gs (Manage deployments → Edit → <b>New version</b>).');
+  else if (verCmp(sv, SERVER_MIN) < 0) verBar('⚠️ Server (Code.gs) masih Versi ' + sv + ', sedangkan tampilan ini membutuhkan minimal Versi ' + SERVER_MIN + '. Admin: deploy ulang Code.gs (Manage deployments → Edit → <b>New version</b>).');
 }
 // 2) file halaman terbaru di hosting (GitHub Pages) vs yang sedang dibuka
 async function cekHalaman() {
@@ -400,12 +445,17 @@ async function cekHalaman() {
   } catch (e) {}
 }
 async function startApp() {
-  document.body.classList.remove('locked'); $('uLbl').textContent = '👤 ' + USER;
-  try { setLibur(await call('getLibur')); } catch (e) { return; }
-  show('dashboard');
-  try { PEG = await call('getPegawai'); } catch (e) { return; }
-  await loadMaster(); refresh();
-  if (!PEG.nama) { show('pengaturan'); toast('Lengkapi Pengaturan. Nama hanya bisa diisi satu kali.'); }
+  Splash.start();
+  try {
+    document.body.classList.remove('locked'); $('uLbl').textContent = '👤 ' + USER;
+    Splash.to(15);
+    try { setLibur(await call('getLibur')); } catch (e) { return; }
+    Splash.to(35);
+    try { PEG = await call('getPegawai'); } catch (e) { return; }
+    Splash.to(55); await loadMaster(); Splash.to(70);
+    show('dashboard'); await SHOWP; Splash.to(95);   // daftar laporan + diagram dasbor sudah siap
+    if (!PEG.nama) { show('pengaturan'); toast('Lengkapi Pengaturan. Nama hanya bisa diisi satu kali.'); }
+  } finally { await Splash.end(); }
 }
 
 // ===== ADMIN =====
@@ -528,7 +578,7 @@ function setTgl(v) {
   const i = dayInfo(v);
   $('iTglBtn').textContent = '📅 ' + fmtLong(v);
   $('iTglInfo').className = 'tinfo ' + i.type;
-  $('iTglInfo').textContent = (i.type === 'kerja' ? '✅ ' : i.type === 'cuti' ? '🟠 ' : '🔴 ') + (i.type === 'kerja' ? 'Hari kerja' : i.text.charAt(0).toUpperCase() + i.text.slice(1));
+  $('iTglInfo').textContent = (i.type === 'kerja' ? '✅ ' : i.type === 'cuti' ? '🟠 ' : '🔴 ') + (i.type === 'kerja' ? 'Hari kerja' : i.text.charAt(0).toUpperCase() + i.text.slice(1)) + (LIST.some(x => x.tanggal === v) ? '  •  ✔ Sudah ada laporan (akan ditimpa)' : '');
 }
 function toggleCal() {
   const c = $('cal');
@@ -542,15 +592,17 @@ function renderCal() {
   const y = CAL.y, m = CAL.m, off = (new Date(y, m, 1).getDay() + 6) % 7, n = new Date(y, m + 1, 0).getDate(), sel = $('iTgl').value, td = today();
   const pre = y + '-' + pad(m + 1) + '-';
   let g = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map((x, i) => `<div class="w ${i > 4 ? 'r' : ''}">${x}</div>`).join('');
+  const has = {}; LIST.forEach(x => has[x.tanggal] = 1);
+  const first = LIST.length ? LIST[LIST.length - 1].tanggal : '9999';   // hari kerja terlewat dihitung sejak laporan pertama
   for (let i = 0; i < off; i++) g += '<button class="cd empty" type="button"></button>';
   for (let d = 1; d <= n; d++) {
-    const iso = pre + pad(d), i = dayInfo(iso);
-    g += `<button type="button" class="cd ${i.type}${iso === sel ? ' sel' : ''}${iso === td ? ' today' : ''}" title="${esc(i.text)}" onclick="pickDay('${iso}')">${d}</button>`;
+    const iso = pre + pad(d), i = dayInfo(iso), ada = !!has[iso], miss = !ada && i.type === 'kerja' && iso > first && iso < td;
+    g += `<button type="button" class="cd ${i.type}${ada ? ' ada' : ''}${miss ? ' miss' : ''}${iso === sel ? ' sel' : ''}${iso === td ? ' today' : ''}" title="${esc(i.text)}${ada ? ' - sudah ada laporan' : miss ? ' - belum ada laporan' : ''}" onclick="pickDay('${iso}')">${d}</button>`;
   }
   const ml = LIBURLIST.filter(x => x.tanggal.startsWith(pre)).map(x => `<div><b style="color:${x.jenis === 'Cuti Bersama' ? '#b54708' : '#d92d20'}">${+x.tanggal.slice(8)} ${BLN[m].slice(0, 3)}</b><span>${esc(x.ket)}${x.jenis === 'Cuti Bersama' ? ' (cuti bersama)' : ''}</span></div>`).join('');
   $('cal').innerHTML = `<div class="ch"><button type="button" onclick="calNav(-1)">‹</button><b>${BLN[m]} ${y}</b><button type="button" onclick="calNav(1)">›</button></div>
    <div class="cg">${g}</div>
-   <div class="lg"><span><i style="background:#fee4e2"></i>Libur nasional</span><span><i style="background:#fef0c7"></i>Cuti bersama</span><span style="color:#d92d20"><b>Sab/Min</b> libur akhir pekan</span></div>
+   <div class="lg"><span><i style="background:#fee4e2"></i>Libur nasional</span><span><i style="background:#fef0c7"></i>Cuti bersama</span><span style="color:#d92d20"><b>Sab/Min</b> libur akhir pekan</span><span><i style="background:#d1fadf"></i>Sudah ada laporan</span><span><i style="box-shadow:inset 0 0 0 1.5px #fda29b"></i>Belum diisi</span></div>
    ${ml ? '<div class="ml">' + ml + '</div>' : ''}
    <div class="cf"><button type="button" class="b s g" onclick="pickDay(today())">Hari ini</button><button type="button" class="b s g" onclick="closeCal()">Tutup</button></div>`;
 }
@@ -562,7 +614,7 @@ function show(v) {
   document.querySelectorAll('.view').forEach(e => e.classList.toggle('on', e.id === 'v-' + v));
   document.querySelectorAll('.sidebar a').forEach(a => a.classList.toggle('on', a.dataset.v === v));
   $('side').classList.remove('open'); window.scrollTo(0, 0);
-  if (v === 'dashboard' || v === 'riwayat' || v === 'cetak') refresh().then(() => { if (v === 'cetak') fillSel(); });
+  if (v === 'dashboard' || v === 'riwayat' || v === 'cetak') SHOWP = refresh().then(() => { if (v === 'cetak') { fillSel(); if (!$('cBln').value) $('cBln').value = today().slice(0, 7); } });
   if (v === 'pengaturan') fillPeg();
   if (v === 'master') fillMaster();
   if (v === 'admin') adLock(); else ADMINKEY = '';
@@ -582,7 +634,7 @@ async function refresh() {
   const h = LIST.find(x => x.tanggal === today());
   $('dHari').textContent = h ? 'Sudah (' + h.jumlah + ')' : 'Belum';
   renderList();
-  if ($('v-dashboard').classList.contains('on')) loadDash();
+  if ($('v-dashboard').classList.contains('on')) await loadDash();
 }
 function ring(p, title, sub, color) {
   const r = 52, c = 2 * Math.PI * r, v = Math.max(0, Math.min(100, p || 0));
@@ -604,16 +656,36 @@ async function loadDash() {
     ring(reps.length ? withFoto / reps.length * 100 : 0, 'Kelengkapan Foto', withFoto + ' dari ' + reps.length + ' laporan', '#f59e0b');
   requestAnimationFrame(() => requestAnimationFrame(() => document.querySelectorAll('.rg-fg').forEach(e => e.style.strokeDashoffset = e.dataset.off)));
 }
-function renderList() {
-  const d = $('fTgl').value, b = $('fBln').value, q = $('fTxt').value.toLowerCase();
-  const rows = LIST.filter(x => (!d || x.tanggal === d) && (!b || x.tanggal.startsWith(b)) && (!q || x.uraian.toLowerCase().includes(q)));
-  $('listBody').innerHTML = rows.map(x => `<tr><td>${fmtLong(x.tanggal).replace(/^\w+, /, '')}</td><td>${esc(hariOf(x.tanggal))}${dayInfo(x.tanggal).type !== 'kerja' ? ` <span class="badge w" title="${esc(dayInfo(x.tanggal).text)}">Libur</span>` : ''}</td><td>${x.jumlah}</td>
+let OPENM = {};
+function rowHTML(x) {
+  const di = dayInfo(x.tanggal), k = x.tanggal.slice(0, 7);
+  return `<tr><td><input type="checkbox" class="rsel" data-b="${k}" value="${x.tanggal}" style="width:auto"></td>
+   <td>${+x.tanggal.slice(8)} ${BLN[+x.tanggal.slice(5, 7) - 1]} ${x.tanggal.slice(0, 4)}</td>
+   <td>${esc(hariOf(x.tanggal))}${di.type !== 'kerja' ? ` <span class="badge w" title="${esc(di.text)}">Libur</span>` : ''}</td><td>${x.jumlah}</td>
    <td><span class="badge ${x.status === 'Lengkap' ? '' : 'w'}">${esc(x.status)}</span></td>
    <td class="row"><button class="b s g" onclick="openReport('${x.tanggal}')">Lihat</button>
    <button class="b s g" onclick="editReport('${x.tanggal}')">Edit</button>
    <button class="b s" onclick="openReport('${x.tanggal}',true)">Cetak</button>
-   <button class="b s r" onclick="delReport('${x.tanggal}')">Hapus</button></td></tr>`).join('')
-   || '<tr><td colspan="5" style="color:var(--mut)">Belum ada laporan.</td></tr>';
+   <button class="b s r" onclick="delReport('${x.tanggal}')">Hapus</button></td></tr>`;
+}
+function selAll(k, on) { document.querySelectorAll('.rsel').forEach(i => { if (i.dataset.b === k) i.checked = on; }); }
+// Riwayat dikelompokkan per bulan
+function renderList() {
+  const d = $('fTgl').value, b = $('fBln').value, q = $('fTxt').value.toLowerCase(), filt = !!(d || b || q);
+  const rows = LIST.filter(x => (!d || x.tanggal === d) && (!b || x.tanggal.startsWith(b)) && (!q || x.uraian.toLowerCase().includes(q)));
+  const grp = {}; rows.forEach(x => (grp[x.tanggal.slice(0, 7)] = grp[x.tanggal.slice(0, 7)] || []).push(x));
+  const keys = Object.keys(grp).sort().reverse();
+  if (!Object.keys(OPENM).length && keys.length) OPENM[keys[0]] = true;   // bulan terbaru terbuka
+  $('listGroups').innerHTML = keys.map(k => {
+    const g = grp[k], keg = g.reduce((a, x) => a + x.jumlah, 0);
+    return `<details class="card mg" ${filt || OPENM[k] ? 'open' : ''} ontoggle="OPENM['${k}']=this.open">
+     <summary><b>${bulanLbl(k)}</b><small>${g.length} laporan &middot; ${keg} kegiatan</small></summary>
+     <div class="row" style="margin:12px 0"><button class="b s" onclick="batchPrint('${k}',true)">🖨 Cetak bulan ini</button>
+      <button class="b s g" onclick="batchZip('${k}',true)">⬇ Unduh ZIP</button>
+      <label style="margin:0"><input type="checkbox" style="width:auto" onchange="selAll('${k}',this.checked)"> Pilih semua</label>
+      <small style="color:var(--mut)">Centang untuk memilih sebagian; tanpa centang = semua laporan bulan ini.</small></div>
+     <div class="tw"><table class="t"><thead><tr><th></th><th>Tanggal</th><th>Hari</th><th>Kegiatan</th><th>Status</th><th>Aksi</th></tr></thead><tbody>${g.map(rowHTML).join('')}</tbody></table></div></details>`;
+  }).join('') || '<div class="card" style="color:var(--mut)">Belum ada laporan.</div>';
 }
 
 // ===== PENGATURAN =====
@@ -775,7 +847,7 @@ async function pickFoto(i, el) {
 }
 function newInput(tgl) {
   EDIT = null; $('iJudul').textContent = 'Input SKP Harian'; setTgl(tgl);
-  $('rows').innerHTML = ''; for (let i = 0; i < 6; i++) addRow();
+  $('rows').innerHTML = ''; addRow();   // mulai 1 kegiatan; bertambah otomatis saat memilih kegiatan
   FOTO = [{}, {}, {}, {}]; buildPhotos(); $('pickQ').value = ''; renderPick();
   document.querySelectorAll('.view').forEach(e => e.classList.toggle('on', e.id === 'v-input'));
   document.querySelectorAll('.sidebar a').forEach(a => a.classList.toggle('on', a.dataset.v === 'input'));
@@ -785,7 +857,7 @@ async function editReport(t) {
   try {
     const r = await call('get', { tanggal: t });
     newInput(t); EDIT = t; $('iJudul').textContent = 'Edit SKP Harian';
-    $('rows').innerHTML = ''; r.items.forEach(addRow); while ($('rows').children.length < 5) addRow();
+    $('rows').innerHTML = ''; r.items.forEach(addRow);
     FOTO = r.fotos.map(f => ({ url: f.url, ket: f.ket })); trimFoto(); buildPhotos();
   } catch (e) { toast('Gagal memuat data: ' + e.message, 1); }
 }
@@ -852,13 +924,14 @@ async function loadPrint(t) {
   try { const r = await call('get', { tanggal: t }); $('report').innerHTML = reportHTML(r); }
   catch (e) { toast('Gagal memuat data: ' + e.message, 1); }
 }
-function reportHTML(r) {
+function reportHTML(r, map) {
+  const U = u => (map && map[u]) || u;
   let rows = r.items.map((x, i) => `<tr><td class="c">${i + 1}</td><td>${esc(x.uraian)}</td><td class="c">${x.target}</td><td class="c">${x.realisasi}</td><td class="c">${esc(x.satuan)}</td><td class="c">${x.capaian}%</td><td>${esc(x.keterangan)}</td></tr>`).join('');
   for (let i = r.items.length; i < 6; i++) rows += `<tr><td class="c">${i + 1}</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`;
   const f = r.fotos; let n = 0;
   f.forEach((x, i) => { if (x.url || x.ket) n = i + 1; }); n = Math.max(4, n); if (n % 2) n++;
   const g = i => f[i] || {};
-  const im = i => `<td class="im" width="50%">${g(i).url ? `<img src="${esc(g(i).url)}">` : ''}</td>`;
+  const im = i => `<td class="im" width="50%">${g(i).url ? `<img src="${esc(U(g(i).url))}">` : ''}</td>`;
   const kt = i => `<td class="kt">Keterangan foto ${i + 1}: ${esc(g(i).ket)}</td>`;
   let ph = ''; for (let i = 0; i < n; i += 2) ph += `<tr>${im(i)}${im(i + 1)}</tr><tr>${kt(i)}${kt(i + 1)}</tr>`;
   return `<h3>LAPORAN BUKTI DUKUNG SKP HARIAN</h3>
@@ -868,11 +941,97 @@ function reportHTML(r) {
    <tr><td>Hari / Tanggal</td><td class="v">${fmtLong(r.tanggal)}</td></tr></table>
   <table class="tb"><tr><th>No</th><th>Uraian Pekerjaan / Kegiatan</th><th>Target</th><th>Realisasi</th><th>Satuan</th><th>Capaian</th><th>Keterangan</th></tr>${rows}</table>
   <table class="tb dok${n > 4 ? ' many' : ''}"><tr><th colspan="2">DOKUMENTASI FOTO</th></tr>${ph}</table>
-  ${sigHTML()}`;
+  ${sigHTML(map)}`;
 }
-function sigHTML() {
-  return `<div class="ttd"><div>Mengetahui,<br>Atasan Langsung<div class="sp">${PEG.ttdAtasan ? `<img src="${esc(PEG.ttdAtasan)}">` : ''}</div><b><u>${esc(PEG.atasan)}</u></b><br>NIP. ${esc(PEG.nipAtasan)}</div>
-   <div><br>Pegawai yang bersangkutan<div class="sp">${PEG.ttdPegawai ? `<img src="${esc(PEG.ttdPegawai)}">` : ''}</div><b><u>${esc(PEG.nama)}</u></b><br>NIP. ${esc(PEG.nip)}</div></div>`;
+function sigHTML(map) {
+  const U = u => (map && map[u]) || u;
+  return `<div class="ttd"><div>Mengetahui,<br>Atasan Langsung<div class="sp">${PEG.ttdAtasan ? `<img src="${esc(U(PEG.ttdAtasan))}">` : ''}</div><b><u>${esc(PEG.atasan)}</u></b><br>NIP. ${esc(PEG.nipAtasan)}</div>
+   <div><br>Pegawai yang bersangkutan<div class="sp">${PEG.ttdPegawai ? `<img src="${esc(U(PEG.ttdPegawai))}">` : ''}</div><b><u>${esc(PEG.nama)}</u></b><br>NIP. ${esc(PEG.nip)}</div></div>`;
+}
+
+// ===== CETAK & UNDUH KELOMPOK PER BULAN (laporan tetap per hari) =====
+let BATCH = { bln: '', dates: [] };
+const LIBS = ['https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'];
+const loadScript = src => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('Gagal memuat pustaka PDF. Periksa koneksi internet.')); document.head.appendChild(s); });
+async function loadLibs() { if (window.JSZip && window.html2canvas && window.jspdf) return; await Promise.all(LIBS.map(loadScript)); }
+function bulanLbl(b) { const p = b.split('-'); return BLN[+p[1] - 1] + ' ' + p[0]; }
+// useSel=true: pakai laporan yang dicentang di Riwayat (jika ada), selain itu semua laporan bulan itu
+function datesOf(bln, useSel) {
+  const all = LIST.filter(x => x.tanggal.startsWith(bln)).map(x => x.tanggal).sort();
+  if (!useSel) return all;
+  const sel = [...document.querySelectorAll('.rsel:checked')].filter(i => i.dataset.b === bln).map(i => i.value).sort();
+  return sel.length ? sel : all;
+}
+async function fetchReports(bln, dates) {
+  const reps = (await call('getBulan', { bulan: bln })).filter(r => dates.includes(r.tanggal));
+  return reps.sort((a, b) => a.tanggal < b.tanggal ? -1 : 1);
+}
+async function batchPrint(bln, useSel) {
+  if (!bln) return toast('Pilih bulan dulu', 1);
+  const dates = datesOf(bln, useSel); if (!dates.length) return toast('Belum ada laporan pada ' + bulanLbl(bln), 1);
+  BATCH = { bln, dates }; Prog.start('Menyiapkan cetak', 1); Prog.next('Memuat ' + dates.length + ' laporan dan foto...');
+  try {
+    const reps = await fetchReports(bln, dates);
+    show('batch'); $('bJudul').textContent = 'Cetak Laporan Harian - ' + bulanLbl(bln); $('bInfo').textContent = reps.length + ' laporan, 1 laporan per halaman';
+    $('breport').innerHTML = reps.map(r => '<div class="rpt">' + reportHTML(r) + '</div>').join('');
+    await waitImgs($('breport')); Prog.ok(); await Prog.end('Siap dicetak'); window.print();
+  } catch (e) { Prog.fail(); toast(e.message, 1); }
+}
+// Gambar dipasang dengan ukuran pasti (tanpa bergantung pada object-fit) agar hasil PDF rapi
+function fitImgs(box) {
+  box.querySelectorAll('img').forEach(im => {
+    const p = im.closest('.im') || im.closest('.sp'); if (!p || !im.naturalWidth) return;
+    const mw = p.clientWidth - 8, mh = p.classList.contains('sp') ? p.clientHeight * (im.closest('.ttd > div:last-child') ? .78 : 1) : p.clientHeight - 8;
+    const sc = Math.min(mw / im.naturalWidth, mh / im.naturalHeight);
+    im.style.cssText = 'max-width:none;max-height:none;object-fit:fill;mix-blend-mode:normal;width:' + im.naturalWidth * sc + 'px;height:' + im.naturalHeight * sc + 'px';
+  });
+}
+async function renderPdf(r, map) {
+  const box = document.createElement('div'); box.style.cssText = 'position:fixed;left:-10000px;top:0;width:210mm;background:#fff';
+  box.innerHTML = '<div class="rpt cap" style="margin:0;border:0">' + reportHTML(r, map) + '</div>'; document.body.appendChild(box);
+  try {
+    await waitImgs(box); fitImgs(box);
+    const cv = await html2canvas(box.firstChild, { scale: 2, backgroundColor: '#fff', useCORS: true, logging: false });
+    const pdf = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+    const W = 210, H = 297, ih = cv.height * W / cv.width, img = cv.toDataURL('image/jpeg', 0.92);
+    for (let p = 0, n = Math.max(1, Math.ceil(ih / H - 0.02)); p < n; p++) { if (p) pdf.addPage(); pdf.addImage(img, 'JPEG', 0, -p * H, W, ih); }
+    return pdf.output('blob');
+  } finally { document.body.removeChild(box); }
+}
+function saveBlob(blob, name) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+}
+// 1 laporan -> file PDF; beberapa laporan -> ZIP berisi PDF per hari (Laporan_SKP_TTTT-BB-HH.pdf)
+async function unduhLaporan(reps, zipName) {
+  const multi = reps.length > 1, cache = {};
+  Prog.start(multi ? 'Menyiapkan ZIP laporan' : 'Menyiapkan PDF', reps.length + (multi ? 2 : 1));
+  try {
+    Prog.next('Memuat pustaka PDF...'); await loadLibs(); Prog.ok();
+    const zip = multi ? new JSZip() : null; let single = null;
+    for (let n = 0; n < reps.length; n++) {
+      const r = reps[n]; Prog.next('Membuat PDF ' + fmtLong(r.tanggal) + ' (' + (n + 1) + ' dari ' + reps.length + ')');
+      const need = [...new Set(r.fotos.map(f => f.url).concat([PEG.ttdAtasan, PEG.ttdPegawai]).filter(u => u && !cache[u]))];
+      for (let i = 0; i < need.length; i += 12) Object.assign(cache, await call('fotoB64', { urls: need.slice(i, i + 12) }));
+      const blob = await renderPdf(r, cache), fn = 'Laporan_SKP_' + r.tanggal + '.pdf';
+      if (zip) zip.file(fn, blob); else single = { blob, fn };
+      Prog.ok();
+    }
+    if (zip) { Prog.next('Mengemas file ZIP...'); const zb = await zip.generateAsync({ type: 'blob', compression: 'STORE' }); Prog.ok(); await Prog.end('Selesai'); saveBlob(zb, zipName); }
+    else { await Prog.end('Selesai'); saveBlob(single.blob, single.fn); }
+    toast('Unduhan siap: ' + (zip ? zipName : single.fn));
+  } catch (e) { Prog.fail(); toast('Gagal membuat file: ' + e.message, 1); }
+}
+async function batchZip(bln, useSel) {
+  if (!bln) return toast('Pilih bulan dulu', 1);
+  const dates = datesOf(bln, useSel); if (!dates.length) return toast('Belum ada laporan pada ' + bulanLbl(bln), 1);
+  let reps; try { reps = await fetchReports(bln, dates); } catch (e) { return toast(e.message, 1); }
+  unduhLaporan(reps, 'Laporan_SKP_' + bulanLbl(bln).replace(' ', '_') + '.zip');
+}
+async function unduhTanggal() {
+  if (!CUR) return toast('Pilih tanggal laporan dulu', 1);
+  let reps; try { reps = await fetchReports(CUR.slice(0, 7), [CUR]); } catch (e) { return toast(e.message, 1); }
+  unduhLaporan(reps);
 }
 
 // ===== REKAP BULANAN =====
@@ -932,10 +1091,11 @@ function savePdf() {
 
 // ===== MULAI =====
 (async function () {
+  Splash.start(); Splash.to(10);
   initEyes(); cekHalaman(); cekVersi();
   document.querySelectorAll('.lbl-ver').forEach(e => e.textContent = 'Versi ' + APP_VERSION);
   TOKEN = store.get('skp_token'); USER = store.get('skp_user');
-  if (TOKEN) await startApp(); else showLogin('');
+  if (TOKEN) await startApp(); else { Splash.to(40); await showLogin(''); await Splash.end(); }
 })();
 </script>
 </body>
